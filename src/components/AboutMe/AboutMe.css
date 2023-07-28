@@ -9,11 +9,10 @@
 }
 
 @media screen and (max-width: 568px) {
-    .about-me {
-        padding: 70px 14px 70px 14px;
-    }
+  .about-me {
+      padding: 70px 14px 70px 14px;
+  }
 }
-
 
 .about-me__heading {
   margin: 0px;
