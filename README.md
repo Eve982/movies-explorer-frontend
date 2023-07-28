@@ -1,70 +1,133 @@
-# Getting Started with Create React App
+### Фронтенд сервиса Movies-Explorer, в котором можно найти фильмы по запросу и сохранить в личном кабинете.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Бэкенд проекта находится [здесь](https://github.com/Eve982/movies-explorer-api).
 
-## Available Scripts
+Макет проекта находится в zip-архиве в корне данного репозитория [Diploma.fig.zip](./Diploma.fig.zip).
 
-In the project directory, you can run:
+- Frontend https://eve982.movies.nomoredomains.xyz/
+- Backend https://api.movies.nomoredomains.xyz/
 
-### `npm start`
+Приложение адаптировано под просмотр на разрешениях экрана от 320px до 1280px и предоставляет возможность найти фильмы по запросу и сохранить в личном кабинете.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Технологии:
+![JavaScript](https://img.shields.io/badge/-JavaScript-090909?style=for-the-badge&logo=JavaScript)
+![React](https://img.shields.io/badge/-React-090909?style=for-the-badge&logo=REACT)
+![BEM](https://img.shields.io/badge/-BEM_nested-090909?style=for-the-badge&logo=BEM)
+![CSS3](https://img.shields.io/badge/-CSS3-090909?style=for-the-badge&logo=CSS3)
+![HTML5](https://img.shields.io/badge/-HTML5-090909?style=for-the-badge&logo=HTML5)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![eslint](https://img.shields.io/badge/-eslint-090909?style=for-the-badge&logo=eslint)
 
-### `npm test`
+## Функционал API:
+- Регистрация;
+- Авторизация;
+- Редактирование профиля;
+- Поиск фильмов по ключевым словам;
+- Сохранение фильмов в раздел "Сохраненные фильмы".
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Директории backend-части приложения (папка backend):
+- `/controllers` — обработчики данных;
+- `/errors` - возможные ошибки приложения;
+- `/middlewares` - промежуточные обработчики авторизации, CORS-запросов, валидации и логов;
+- `/models` — схемы БД;
+- `/routes` — маршруты;
+- `/utils` — вспомогательные утилиты и константы.
 
-### `npm run build`
+## Директории React-приложения (папка frontend):
+- `/public`- содержит файлы, которые должны быть скопированы в папку build (папку сборки) нетронутыми;
+- `src/components` - компоненты React-приложения;
+- `src/context` - файлы контекста;
+- `src/images` - изображения, используемые в проекте;
+- `src/utils` - API, а также переменные приложения;
+- `src/vendor` - файлы шрифтов.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Копирование проекта на локальную машину:
+Для клонирования и запуска проекта на Вашей локальной машине должны быть установлены:
+- git (при отсутствии можно копировать проект архивами);
+- npm;
+- Node.js.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Все команды необходимо выполнять в командной строке Вашего ПК.
+Создайте пустую папку <b>movies-explorer</b> на локальной машине.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Проект состоит из двух частей: фронтенд и бэкенд. Каждая часть находится в отдельном git-репозитории. Поэтому в основной папке movies-explorer создайте 2 подпапки: <b>frontend</b> и <b>backend</b>.
 
-### `npm run eject`
+Выполните клонирование репозиториев в соответствующие подпапки выполнением следующих команд в командной строке:
+```
+git clone <сссылка на проект>
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+если Вы используете SSH-подключение, то, вместо <сссылка на проект>, укажите (бэкенд и фронтенд соответственно):
+```
+git@github.com:Eve982/movies-explorer-api.git
+```
+```
+git@github.com:Eve982/movies-explorer-frontend.git
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+если Вы используете HTTPS-подключение - укажите следующую ссылку:
+```
+https://github.com/Eve982/movies-explorer-api.git
+```
+```
+https://github.com/Eve982/movies-explorer-frontend.git
+```
+После клонирования репозиториев выполните установку зависимостей командой:
+```
+npm install
+```
+в обеих подпапках проекта.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Локальный запуск проекта:
+Для запуска данного проекта локально Вам поднадобиться открыть 2 окна терминала.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+В первом окне терминала находясь в папке <b><название_папки_Вашего_проекта>/backend</b> выполнить команду для запуска сервера:
+```
+npm run start
+```
 
-## Learn More
+или команду для запуска сервера в режиме разработчика если Вы планируете вносить изменения в приложение:
+```
+npm run dev
+```
+Сервер на Node.js по-умолчанию запускается на 3000-м порту.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Во втором окне терминала находясь в папке <b>movies-explorer/frontend</b> выполнить команду для запуска React-приложения:
+```
+npm start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+React-приложение также по-умолчанию запускается на 3000 порту, поэтому после выполнения последней команды Вам надо будет ответить на следующий вопрос:
+```
+Would you like to run the app on another port instead? › (Y/n)
+```
 
-### Code Splitting
+введите 'y'.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Проект должен быть доступен по адресу:
+```
+http://localhost:3001/signin
+```
 
-### Analyzing the Bundle Size
+Номер порта может быть иной в зависимости от того, какой ближайший порт будет свободен на Вашей машине.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Если Ваш проект запущен на ином порте, нежели 3001 или 3002, Вам необходимо добавить строку адреса с Вашим портом в список разрешенных адресов ALLOWED_CORS в [файл /movies-explorer-api/backend/utils/constants.js](./movies-explorer-api/backend/utils/constants.js) в таком формате:
+```
+'http://localhost:<номер_порта>',
+```
 
-### Making a Progressive Web App
+Для остановки сервера и React-приложения в каждом терминале необходимо выполнить команду Ctrl+C.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<!-- ## Планы по доработке проекта
+- доработать swagger-доку в ветке redoc;
+- настроить CI/CD;
+- добавить возможность удаления профиля. -->
 
-### Advanced Configuration
+### **Автор**
+[Ольга Боброва](https://github.com/eve982)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+<!-- ## Заметка для рыбки Дори!
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Если возникнут проблемы с деплоем, то необходимо проверить как работает модуль frontend/src/utils/constants.js который ты добавила. Данный модуль используется в следующих файлах:
+- [/react-mesto-api-full/backend/utils/Api.js](/react-mesto-api-full/backend/utils/Api.js);
+- [/react-mesto-api-full/backend/utils/Auth.jsx](/react-mesto-api-full/backend/utils/Auth.jsx). -->

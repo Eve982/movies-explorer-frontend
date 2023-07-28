@@ -1,61 +1,65 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import './Login.css';
+import formLink from '../../images/formLink.svg';
+import Input from "../Input/Input";
+import validateEmail from "../../utils/validateEmail";
+import validatePassword from "../../utils/validatePassword";
 
-function Login({ handleLogin }) {
-  const [data, setData] = React.useState({
-    email: "",
-    password: "",
-  });
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setData((oldData) => ({ ...oldData, [name]: value }));
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    handleLogin(data);
+function Login() {
+  const [validate, setValidate] = useState({});
+  const handleError = (isValidate) => {
+    setValidate(prev => ({...prev, ...isValidate}));
+  };
+  const isFormValidated = (validate) => {
+    if (Object.values.length === 0) return false;
+    console.log('Object.values: ', Object.values.length);
+    const res = Object.values(validate).every(item => {
+      return item;
+    } )
+    console.log('res: ', res);
+    return res;
   }
 
   return (
-    <div className="authorization">
-      <h3 className="authorization__title">Вход</h3>
-      <form
-        action=""
-        name="login"
-        onSubmit={handleSubmit}
-        className="authorization__form"
-      >
-        <input
-          placeholder="Email"
-          required
+  <main>
+    <form className="form">
+      <div className="form__info">
+        <Link className="form__link" to="/">
+          <img className="form__image" src={formLink} alt="Логотип."/>
+        </Link>
+        <h2 className="form__title">Рады видеть!</h2>
+        <Input className="form__input"
+          label="Email"
           type="email"
           name="email"
-          minLength="2"
-          maxLength="40"
-          className="authorization__input"
-          onChange={handleChange}
-          autoComplete="on"
-        />
-        <input
-          placeholder="Пароль"
-          required
+          onError={handleError}
+          validator={validateEmail}
+          textError="Некорректный e-mail."
+          placeholder="Email"
+          required />
+        <Input
+          label="Пароль"
           type="password"
+          onError={handleError}
+          validator={validatePassword}
+          textError="Слишком короткий пароль."
           name="password"
-          minLength="2"
-          maxLength="200"
-          className="authorization__input"
-          onChange={handleChange}
-          autoComplete="on"
+          placeholder="Password"
+          required
         />
-        <button
-          type="submit"
-          className="authorization__submit-button"
-          aria-label="Сохранить ссылку."
-        >
-          Войти
+      </div>
+      <div className="form__buttons-section">
+        <button className={`form__submit-button form__submit-button_login
+          ${!isFormValidated(validate) ? "form__submit-button_disabled" : ''}`}>Войти
         </button>
-      </form>
-    </div>
-  );
+        <p className="form__question">Еще не зарегистрированы?
+          <Link to='/signup' className="form__link">Регистрация</Link>
+        </p>
+      </div>
+    </form>
+  </main>
+  )
 }
+
 export default Login;

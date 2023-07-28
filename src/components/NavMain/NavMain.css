@@ -1,0 +1,72 @@
+.navigation {
+    display: flex;
+    margin-right: 50px;
+    margin-left: 44px;
+    gap: 730px;
+
+}
+
+@media screen and (max-width: 1279px) {
+    .navigation {
+        display: none;
+    }
+}
+
+.navigation__films {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navigation__movies {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: #FFF;
+    text-decoration: none;
+}
+
+.navigation__movies:hover {
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.navigation__saved-movies {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: #FFF;
+    text-decoration: none;
+}
+
+.navigation__saved-movies:hover {
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.navigation__account {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 50px;
+    border: 2px solid #AAA;
+    height: 32px;
+    width: 100px;
+    margin-right: 13px;
+}
+
+.navigation__account-link {
+    text-decoration: none;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    align-self: center;
+}
+
+.navigation__account-icon {
+    width: 12px;
+    height: 14px;
+    align-self: center;
+}
