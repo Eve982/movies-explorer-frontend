@@ -2,7 +2,7 @@
 
 Бэкенд проекта находится [здесь](https://github.com/Eve982/movies-explorer-api).
 
-Макет проекта находится в zip-архиве в корне данного репозитория [Diploma.fig.zip](./Diploma.fig.zip).
+Макет проекта находится в zip-архиве в корне данного репозитория [dark-3.fig.zip](./dark-3.fig.zip).
 
 - Frontend https://eve982.movies.nomoredomains.xyz/
 - Backend https://api.movies.nomoredomains.xyz/
