@@ -74,8 +74,10 @@
     font-weight: 400;
     height: 17px;
     color: #FFFFFF;
+    background-color: #424242;
     background: none;
     border-bottom: 1px solid #424242;
+    border-radius: 3px;
     padding-bottom: 10px;
 }
 
@@ -163,6 +165,8 @@
     font-weight: 500;
     margin-bottom: 16px;
     font-size: 14px;
+    border-radius: 3px;
+    overflow: hidden;
 }
 
 .form__submit-button_disabled {

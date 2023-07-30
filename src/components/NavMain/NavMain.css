@@ -1,12 +1,12 @@
 .navigation {
     display: flex;
-    margin-right: 50px;
-    margin-left: 44px;
-    gap: 730px;
-
+    /* margin-right: 50px;
+    margin-left: 44px; */
+    justify-content: space-between;
+    width: 100%;
 }
 
-@media screen and (max-width: 1279px) {
+@media screen and (max-width: 767px) {
     .navigation {
         display: none;
     }
@@ -53,7 +53,6 @@
     border: 2px solid #AAA;
     height: 32px;
     width: 100px;
-    margin-right: 13px;
 }
 
 .navigation__account-link {

@@ -3,6 +3,8 @@
     justify-content: space-between;
     height: 74px;
     align-items: center;
+    gap: 44px;
+    padding-right: 30px;
 }
 
 @media screen and (max-width: 767px) {
@@ -60,16 +62,10 @@
     margin-right: 70px;
 }
 
-@media screen and (max-width: 1279px) {
-    .header__burger-menu {
-        display: block;
-        margin-right: 30px;
-    }
-}
-
 @media screen and (max-width: 767px) {
     .header__burger-menu {
         margin-right: 0px;
+        display: block;
         width: 40px;
         height: 40px;
         background-size: 40px;
