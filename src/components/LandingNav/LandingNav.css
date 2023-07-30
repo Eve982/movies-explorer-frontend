@@ -1,0 +1,45 @@
+.landingnav {
+    margin: 0;
+    padding: 0;
+    background-color: #272727;
+    min-height: 66px;
+    width: 100%;
+}
+
+.landingnav__links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+}
+
+@media screen and (max-width: 568px) {
+    .landingnav__links {
+        gap: 24px;
+    }
+}
+
+.landingnav__link {
+    font-size: 13px;
+    margin-top: 25px;
+    font-weight: 500;
+    line-height: 16px;
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.landingnav__link:hover {
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+
+@media screen and (max-width: 568px) {
+    .landingnav__link {
+        font-size: 11px;
+    }
+}

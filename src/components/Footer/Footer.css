@@ -1,0 +1,116 @@
+.footer {
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: #202020;
+}
+
+@media screen and (max-width: 568px) {
+    .footer {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+.footer__main-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.footer__title {
+    border-bottom: 1px solid #424242;
+    color: #8B8B8B;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0px;
+    text-align: center;
+    margin: 60px 0 0;
+    height: 35px;
+}
+
+@media screen and (max-width: 568px) {
+    .footer__title {
+        font-size: 12px;
+    }
+}
+
+.footer__info-container {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+@media screen and (max-width: 568px) {
+    .footer__info-container {
+        align-items: center;
+        flex-direction: column-reverse;
+        font-size: 12px;
+        margin-top: 31px;
+        line-height: 15px;
+        gap: 30px;
+    }
+}
+
+.footer__copyright {
+    margin: 0px;
+    align-self: center;
+    margin-left: 34px;
+    color: #FFF;
+    font-size: 13px;
+}
+
+@media screen and (max-width: 768px) {
+    .footer__copyright {
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .footer__copyright {
+        font-size: 12px;
+    }
+}
+
+.footer__links-container {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    text-decoration: none;
+    margin-right: 40px;
+}
+
+@media screen and (max-width: 768px) {
+    .footer__links-container {
+        margin-right: 0;
+    }
+}
+
+
+@media screen and (max-width: 568px) {
+    .footer__links-container {
+        align-items: center;
+        flex-direction: column;
+        gap: 12px
+    }
+}
+
+.footer__link {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0px;
+    text-align: right;
+    text-decoration: none;
+    color: #fff
+}
+
+@media screen and (max-width: 568px) {
+    .footer__link {
+        font-size: 12px;
+    }
+}

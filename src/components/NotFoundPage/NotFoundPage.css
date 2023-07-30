@@ -1,0 +1,82 @@
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.not-found__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 246px;
+    gap: 5px;
+    color: white;
+}
+
+@media screen and (max-width: 1279px) {
+    .not-found__info {
+        margin-top: 408px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .not-found__info {
+        margin-top: 329px;
+        gap: 10px
+    }
+}
+
+.not-found__code {
+    font-weight: 400;
+    font-size: 140px;
+    line-height: 169px;
+    margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+    .not-found__code {
+        font-size: 80px;
+        line-height: 97px;
+    }
+}
+
+.not-found__message {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+    .not-found__message {
+        font-size: 12px;
+        line-height: 15px;
+    }
+}
+
+.not-found__back-button {
+    margin-bottom: 60px;
+    background: none;
+    border: none;
+    color: #4285F4;
+    cursor: pointer;
+    padding: 50px 0 0 0;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+@media screen and (max-width: 1279px) {
+    .not-found__back-button {
+        margin-bottom: 222px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .not-found__back-button {
+        font-size: 12px;
+        line-height: 15px;
+        margin-bottom: 30px;
+    }
+}
