@@ -3,17 +3,21 @@ import Promo from "../Promo/Promo";
 import LandingNav from "../LandingNav/LandingNav";
 import Techs from "../Techs/Techs";
 import AboutMe from "../AboutMe/AboutMe";
+import Header from "../Header/Header";
 
-function Main () {
+function Main({ loggedIn }) {
   return (
-  <main>
-    <Promo/>
-    <LandingNav></LandingNav>
-    <AboutProject></AboutProject>
-    <Techs></Techs>
-    <AboutMe></AboutMe>
-  </main>
-  )
+    <>
+      <Header loggedIn={loggedIn} />
+      <main>
+        <Promo />
+        <LandingNav></LandingNav>
+        <AboutProject></AboutProject>
+        <Techs></Techs>
+        <AboutMe></AboutMe>
+      </main>
+    </>
+  );
 }
 
 export default Main;
