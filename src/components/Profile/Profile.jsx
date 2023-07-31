@@ -1,20 +1,19 @@
-import { Link } from "react-router-dom";
-import "./Profile.css";
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
+import "./Profile.css";
 
-function Profile({ onSubmit, onClickLogout }) {
+function Profile({ onSubmit, logout }) {
   const currentUser = useContext(CurrentUserContext);
-
+  console.log('currentUser: ', currentUser);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
   });
-
   const [editClicked, setEditClicked] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isValid, setIsValid] = useState(false);
-  const [isNewInfo, setIsNewInfo] = useState(false);
+  const [isValid, setValid] = useState(false);
+  const [isNewInfo, setNewInfo] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -23,7 +22,7 @@ function Profile({ onSubmit, onClickLogout }) {
       [name]: value,
     });
     setErrors({ ...errors, [name]: e.target.validationMessage });
-    setIsValid(e.target.closest("form").checkValidity());
+    setValid(e.target.closest("form").checkValidity());
   }
 
   function handleEdit() {
@@ -37,14 +36,16 @@ function Profile({ onSubmit, onClickLogout }) {
   }
 
   useEffect(() => {
-    setUserData({
-      name: currentUser.name,
-      email: currentUser.email,
-    });
-  }, [currentUser.name, currentUser.email]);
+    if (currentUser) {
+      setUserData({
+        name: currentUser.name,
+        email: currentUser.email,
+      });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    setIsNewInfo(
+    setNewInfo(
       currentUser.name !== userData.name ||
         currentUser.email !== userData.email,
     );
@@ -104,7 +105,7 @@ function Profile({ onSubmit, onClickLogout }) {
               </button>
             </li>
             <li>
-              <Link className="profile__link" onClick={onClickLogout} to="/">
+              <Link className="profile__link" onClick={logout} to="/">
                 Выйти из аккаунта
               </Link>
             </li>

@@ -60,6 +60,7 @@ function Login({ handleLogin, isLoading }) {
               maxLength="30"
               onChange={handleChange}
               value={userLoginData.password}
+              autoComplete="current-password"
             />
           </label>
           <span className="form__error">{errors.password}</span>

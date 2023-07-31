@@ -1,8 +1,8 @@
 import "./InfoToolTip.css";
-import successIcon from "../../images/success-icon.svg";
+// import successIcon from "../../images/success-icon.svg";
 import failIcon from "../../images/fail-icon.svg";
 
-function InfoTooltip({ isOpen, onClose, isSucsess, text }) {
+function InfoTooltip({ isOpen, onClose, message }) {
   return (
     <div className={`popup ${isOpen ? "popup_opened" : ""}`} onClick={onClose}>
       <div
@@ -17,10 +17,12 @@ function InfoTooltip({ isOpen, onClose, isSucsess, text }) {
         ></button>
         <img
           className="popup__tip-icon"
-          src={isSucsess ? successIcon : failIcon}
-          alt={isSucsess ? "Красный крест." : "Зеленая галочка."}
+          src={failIcon}
+          alt="Красный крест."
+          // src={isSucsess ? successIcon : failIcon}
+          // alt={isSucsess ? "Красный крест." : "Зеленая галочка."}
         />
-        <h3 className="popup__tip">{text}</h3>
+        <h3 className="popup__tip">{message}</h3>
       </div>
     </div>
   );

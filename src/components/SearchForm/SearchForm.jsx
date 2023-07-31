@@ -18,7 +18,7 @@ function SearchForm({
     const showSearchError = document.querySelector(".searchForm__error");
 
     if (searchFormInput.validity.valueMissing) {
-      showSearchError.textContent = "Нужно ввести ключевое слово";
+      showSearchError.textContent = "Нужно ввести ключевое слово.";
     } else {
       showSearchError.textContent =
         "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.";

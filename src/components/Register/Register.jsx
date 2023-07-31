@@ -77,6 +77,7 @@ function Register({ handleRegistration, isLoading }) {
               maxLength="30"
               value={userRegistrationData.password}
               onChange={handleChange}
+              autoComplete="current-password"
             />
           </label>
           <span className="form__error">{errors.password}</span>

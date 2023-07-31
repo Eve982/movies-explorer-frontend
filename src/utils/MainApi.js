@@ -1,6 +1,6 @@
 import { BEATFILM_URL, BASE_URL } from "../utils/constants";
 
-class Api {
+class MainApi {
   constructor({ baseUrl, mode, credentials, headers }) {
     this._BASECONFIG = { mode, credentials, headers };
     this._baseUrl = baseUrl;
@@ -67,9 +67,7 @@ class Api {
   }
 }
 
-const api = new Api({
-  //   baseUrl: "http://localhost:3000",
-  //   baseUrl: "https://api.eve982.pet-project.nomoredomains.work/",
+const mainApi = new MainApi({
   baseUrl: BASE_URL,
   mode: "cors",
   credentials: "include",
@@ -77,4 +75,4 @@ const api = new Api({
     "Content-Type": "application/json",
   },
 });
-export default api;
+export default mainApi;

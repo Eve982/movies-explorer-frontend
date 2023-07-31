@@ -22,10 +22,12 @@ function App() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
-  const [isAuthSuccess, setIsAuthSuccess] = useState(false);
-  const [savedMovies, setSavedMovies] = useState([]);
+
   const [isInfoToolTipOpen, setInfoToolTipOpen] = useState(false);
 
+  const [infoToolTipText, setInfoToolTipText] = useState("");
+
+  const [savedMovies, setSavedMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [savedFilteredMovies, setSavedFilteredMovies] = useState([]);
@@ -33,10 +35,6 @@ function App() {
   const [shortsSavedIsChecked, setShortsSavedIsChecked] = useState(false);
   const [shortMovies, setShortMovies] = useState([]);
   const [shortMoviesSaved, setShortMoviesSaved] = useState([]);
-
-  function handleOpeningInfoToolTip() {
-    setInfoToolTipOpen(true);
-  }
 
   useEffect(() => {
     function closeByEscape(e) {
@@ -52,28 +50,21 @@ function App() {
     }
   }, [isInfoToolTipOpen]);
 
-  function showErrorPopup(
-//     errorMessage = `Произошла ошибка.
-// Попробуйте еще раз.`,
-  ) {
-    // setInfoToolTipType(false);
-    // setInfoToolTipText(errorMessage);
+  function showErrorPopup(textError) {
+    setInfoToolTipText(textError);
     setInfoToolTipOpen(true);
   }
 
   function handleRegister(data) {
     register(data)
       .then((res) => {
-        setIsAuthSuccess(true);
-        navigate("/signin");
+        setLoggedIn(true);
+        navigate("/movies");
       })
       .catch((err) => {
         console.log("smth wrong");
-        setIsAuthSuccess(false);
+        showErrorPopup(err);
       })
-      .finally(() => {
-        handleOpeningInfoToolTip();
-      });
   }
 
   function handleLogin(data) {
@@ -83,8 +74,7 @@ function App() {
         navigate("/movies");
       })
       .catch((err) => {
-        handleOpeningInfoToolTip();
-        setIsAuthSuccess(false);
+        showErrorPopup(err);
       });
   }
 
@@ -92,14 +82,51 @@ function App() {
     checkTokenApi()
       .then((data) => {
         setLoggedIn(true);
-        navigate("/");
+        navigate("/movies");
       })
       .catch((err) => console.log(err));
   }
-
   useEffect(() => {
     checkToken();
+    setLoggedIn(true);
   }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      Promise.all([mainApi.getUserInfo(), mainApi.getSavedMovies()])
+        .then(([userData, moviesData]) => {
+          setCurrentUser(userData);
+          setSavedMovies(moviesData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      return;
+    } else {
+      mainApi
+        .getUserInfo()
+        .then((res) => {
+          setCurrentUser(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      moviesApi
+        .getInitialMovies()
+        .then((res) => {
+          localStorage.setItem("movies", JSON.stringify(res));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [loggedIn]);
 
   function handleLogout() {
     navigate("/", { replace: true });
@@ -156,29 +183,17 @@ function App() {
     mainApi
       .updateUserInfo({ name: userData.name, email: userData.email })
       .then((res) => {
-        setCurrentUser(res.data);
+        setCurrentUser(res);
         setIsLoading(false);
-        // setInfoToolTipType(true);
-        // setInfoToolTipText(`Данные профиля обновлены.`);
+        setInfoToolTipText(`Данные профиля обновлены.`);
         setInfoToolTipOpen(true);
       })
       .catch((err) => {
-        showErrorPopup(`При обновлении профиля произошла ошибка.`);
+        showErrorPopup(err);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }
-
-  function findCurrentUserMovies(movies, currentUserId) {
-    let currentUserMovies = [];
-
-    movies.forEach((movie) => {
-      if (movie.owner === currentUserId) {
-        currentUserMovies.push(movie);
-      }
-    });
-    return currentUserMovies;
   }
 
   function saveMovie(movie) {
@@ -186,16 +201,12 @@ function App() {
       .saveMovie(movie)
       .then(() => {
         mainApi.getSavedMovies().then((res) => {
-          const currentUserMovies = findCurrentUserMovies(
-            res.data,
-            currentUser._id,
-          );
-          setSavedMovies(currentUserMovies);
-          setSavedFilteredMovies(currentUserMovies);
+          setSavedMovies(res);
+          setSavedFilteredMovies(res);
         });
       })
       .catch((err) => {
-        showErrorPopup();
+        showErrorPopup(err);
       });
   }
 
@@ -212,47 +223,17 @@ function App() {
       mainApi
         .getSavedMovies()
         .then((res) => {
-          const currentUserMovies = findCurrentUserMovies(
-            res.data,
-            currentUser._id,
-          );
-          setSavedMovies(currentUserMovies);
-          setSavedFilteredMovies(currentUserMovies);
+          setSavedMovies(res);
+          setSavedFilteredMovies(res);
         })
         .catch((err) => console.log(err));
     }
   }, [loggedIn, currentUser]);
 
-  useEffect(() => {
-    if (!loggedIn) {
-      return;
-    } else {
-      mainApi
-        .getUserInfo()
-        .then((res) => {
-          setCurrentUser(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      moviesApi
-        .getInitialMovies()
-        .then((res) => {
-          localStorage.setItem("movies", JSON.stringify(res));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [loggedIn]);
-
   function handleShortsChangeMovies() {
     localStorage.setItem("shortsIsChecked", !shortsIsChecked);
     setShortsIsChecked(!shortsIsChecked);
-    console.log(!shortsIsChecked);
     const shortMovies = filters.findShorts(filteredMovies);
-    console.log(shortMovies);
     setShortMovies(shortMovies);
     localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
   }
@@ -331,7 +312,7 @@ function App() {
                   <ProtectedRoute
                     loggedIn={loggedIn}
                     element={ProfileLayout}
-                    onClickLogout={handleLogout}
+                    logout={handleLogout}
                     handleUpdateProfile={handleUpdateProfile}
                   />
                 }
@@ -342,10 +323,7 @@ function App() {
               <Route
                 path="/signin"
                 element={
-                  <Login
-                  handleLogin={handleLogin}
-                    isLoading={isLoading}
-                  />
+                  <Login handleLogin={handleLogin} isLoading={isLoading} />
                 }
               />
               <Route
@@ -362,10 +340,9 @@ function App() {
           {<Route path="/*" element={<NotFoundPage />} />}
         </Routes>
         <InfoToolTip
-          // isOpen={isInfoToolTipOpen}
-          onClose={() => (setInfoToolTipOpen(false))}
-          isSucsess={isAuthSuccess}
-          text={""}
+          isOpen={isInfoToolTipOpen}
+          onClose={() => setInfoToolTipOpen(false)}
+          message={infoToolTipText}
         />
       </div>
     </CurrentUserContext.Provider>
