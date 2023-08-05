@@ -7,11 +7,12 @@ function Movies({
   filteredMovies,
   onFindClick,
   savedMovies,
+  likeMovie,
   removeMovie,
   onShorts,
   shortsIsChecked,
-  likeMovie,
   shortMovies,
+  loggedIn,
 }) {
   const [searchKey, setSearchKey] = useState("");
 

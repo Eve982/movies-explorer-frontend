@@ -30,7 +30,6 @@ function SearchForm({
     if (!searchFormInput.validity.valid) {
       e.preventDefault();
       showError();
-      return;
     }
     onFindClick(e);
   }
@@ -59,7 +58,7 @@ function SearchForm({
           required
           name="searchFormInput"
         />
-        <button className="search-form__button">Найти</button>
+        <button className="search-form__button"></button>
       </form>
       <span className="searchForm__error"></span>
       <FilterCheckbox

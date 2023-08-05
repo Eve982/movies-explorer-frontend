@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import formLink from "../../images/formLink.svg";
 
-function Register({ handleRegistration, isLoading }) {
+function Register({ handleRegister, isLoading }) {
   const [userRegistrationData, setUserRegistrationData] = useState({
     name: "",
     email: "",
@@ -27,7 +27,7 @@ function Register({ handleRegistration, isLoading }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleRegistration(userRegistrationData);
+    handleRegister(userRegistrationData);
   }
 
   return (
@@ -62,6 +62,7 @@ function Register({ handleRegistration, isLoading }) {
               required
               value={userRegistrationData.email}
               onChange={handleChange}
+              autoComplete="current-password"
             />
           </label>
           <span className="form__error">{errors.email}</span>

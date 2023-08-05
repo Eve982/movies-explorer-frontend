@@ -3,13 +3,15 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList'
 import { useState } from 'react'
 
 function SavedMovies({
-    onFindClick,
-    savedMovies,
-    removeMovie,
-    savedFilteredMovies,
-    onShorts,
-    shortsIsChecked,
-    shortMovies
+  onFindClick,
+  savedMovies,
+  likeMovie,
+  removeMovie,
+  savedFilteredMovies,
+  onShorts,
+  shortsIsChecked,
+  shortMovies,
+  loggedIn
 }) {
 
     const [searchKeySaved, setSearchKeySaved] = useState('')
@@ -32,6 +34,7 @@ function SavedMovies({
             likedMovies={savedMovies}
             filteredMovies={shortsIsChecked ? shortMovies : savedFilteredMovies}
             removeMovie={removeMovie}
+            likeMovie={likeMovie}
             savedMovies={savedMovies}/>
         </main>
     )

@@ -10,10 +10,11 @@ class MainApi {
   _getServerResponse(res) {
     if (res.ok) {
       return res.json();
+    } else {
+      return res.json().then((data) => {
+        return Promise.reject(data);
+      });
     }
-    return Promise.reject(
-      `Что-то пошло не так при обмене данными с сервером: ${res.status}`,
-    );
   }
 
   getSavedMovies() {

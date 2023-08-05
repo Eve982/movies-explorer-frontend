@@ -11,10 +11,11 @@ import Layout from "../Layout/Layout";
 import ProfileLayout from "../ProfileLayout/ProfileLayout";
 import Preloader from "../Preloader/Preloader";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
-import * as moviesApi from "../../utils/MoviesApi";
+import authApi from "../../utils/AuthApi.js";
+// import { register, login, checkTokenApi } from "../../utils/AuthApi.js";
 import mainApi from "../../utils/MainApi.js";
+import * as moviesApi from "../../utils/MoviesApi";
 import * as filters from "../../utils/filters";
-import { register, authorize, checkTokenApi } from "../../utils/Auth.js";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
@@ -24,17 +25,17 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [isInfoToolTipOpen, setInfoToolTipOpen] = useState(false);
-
   const [infoToolTipText, setInfoToolTipText] = useState("");
+
+  const [shortsSavedIsChecked, setShortsSavedIsChecked] = useState(false);
+  const [shortMovies, setShortMovies] = useState([]);
+  const [shortMoviesSaved, setShortMoviesSaved] = useState([]);
 
   const [savedMovies, setSavedMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [savedFilteredMovies, setSavedFilteredMovies] = useState([]);
   const [shortsIsChecked, setShortsIsChecked] = useState(false);
-  const [shortsSavedIsChecked, setShortsSavedIsChecked] = useState(false);
-  const [shortMovies, setShortMovies] = useState([]);
-  const [shortMoviesSaved, setShortMoviesSaved] = useState([]);
 
   useEffect(() => {
     function closeByEscape(e) {
@@ -51,26 +52,29 @@ function App() {
   }, [isInfoToolTipOpen]);
 
   function showErrorPopup(textError) {
-    setInfoToolTipText(textError);
+    setInfoToolTipText(textError.message);
     setInfoToolTipOpen(true);
   }
 
   function handleRegister(data) {
-    register(data)
+    authApi
+      .register(data)
       .then((res) => {
         setLoggedIn(true);
+        setCurrentUser(data);
         navigate("/movies");
       })
       .catch((err) => {
-        console.log("smth wrong");
         showErrorPopup(err);
-      })
+      });
   }
-
+  console.log("CurrentUser: ", currentUser);
   function handleLogin(data) {
-    authorize(data)
+    authApi
+      .login(data)
       .then((res) => {
         setLoggedIn(true);
+        setCurrentUser(data);
         navigate("/movies");
       })
       .catch((err) => {
@@ -79,54 +83,18 @@ function App() {
   }
 
   function checkToken() {
-    checkTokenApi()
+    authApi
+      .checkTokenApi()
       .then((data) => {
         setLoggedIn(true);
+        setCurrentUser(data);
         navigate("/movies");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log("authorization needed", err));
   }
   useEffect(() => {
     checkToken();
-    setLoggedIn(true);
   }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      Promise.all([mainApi.getUserInfo(), mainApi.getSavedMovies()])
-        .then(([userData, moviesData]) => {
-          setCurrentUser(userData);
-          setSavedMovies(moviesData);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [loggedIn]);
-
-  useEffect(() => {
-    if (!loggedIn) {
-      return;
-    } else {
-      mainApi
-        .getUserInfo()
-        .then((res) => {
-          setCurrentUser(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      moviesApi
-        .getInitialMovies()
-        .then((res) => {
-          localStorage.setItem("movies", JSON.stringify(res));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [loggedIn]);
 
   function handleLogout() {
     navigate("/", { replace: true });
@@ -147,6 +115,44 @@ function App() {
     setShortMovies([]);
   }
 
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     Promise.all([mainApi.getUserInfo(), mainApi.getSavedMovies()])
+  //       .then(([userData, moviesData]) => {
+  //         setCurrentUser(userData);
+  //         setSavedMovies(moviesData);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }, [loggedIn]);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      return;
+    } else {
+      mainApi
+        .getUserInfo()
+        .then((res) => {
+          setCurrentUser(res.data);
+          console.log("IsLogged_UseEffect_currentUser: ", currentUser);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      moviesApi
+        .getInitialMovies()
+        .then((res) => {
+          localStorage.setItem("movies", JSON.stringify(res));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [loggedIn]);
+
   function handleFindClickMovies(e) {
     e.preventDefault();
     const moviesArray = JSON.parse(localStorage.getItem("movies"));
@@ -154,6 +160,7 @@ function App() {
     const filteredMovies = filters.filterByKeyWord(inputValue, moviesArray);
     localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
     localStorage.setItem("searchKey", inputValue);
+    console.log("inputValue: ", inputValue);
     setFilteredMovies(filteredMovies);
 
     if (shortsIsChecked) {
@@ -184,6 +191,7 @@ function App() {
       .updateUserInfo({ name: userData.name, email: userData.email })
       .then((res) => {
         setCurrentUser(res);
+        console.log("handleUpdateProfile_currentUser: ", currentUser);
         setIsLoading(false);
         setInfoToolTipText(`Данные профиля обновлены.`);
         setInfoToolTipOpen(true);
@@ -216,20 +224,6 @@ function App() {
     });
   }
 
-  useEffect(() => {
-    if (!loggedIn) {
-      return;
-    } else {
-      mainApi
-        .getSavedMovies()
-        .then((res) => {
-          setSavedMovies(res);
-          setSavedFilteredMovies(res);
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [loggedIn, currentUser]);
-
   function handleShortsChangeMovies() {
     localStorage.setItem("shortsIsChecked", !shortsIsChecked);
     setShortsIsChecked(!shortsIsChecked);
@@ -243,6 +237,20 @@ function App() {
     const shortMoviesSaved = filters.findShorts(savedFilteredMovies);
     setShortMoviesSaved(shortMoviesSaved);
   }
+
+  useEffect(() => {
+    if (!loggedIn) {
+      return;
+    } else {
+      mainApi
+        .getSavedMovies()
+        .then((res) => {
+          setSavedMovies(res);
+          setSavedFilteredMovies(res);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [loggedIn, currentUser]);
 
   useEffect(() => {
     const filteredMovies = localStorage.getItem("filteredMovies");
@@ -280,11 +288,11 @@ function App() {
                       onFindClick={handleFindClickMovies}
                       filteredMovies={filteredMovies}
                       savedMovies={savedMovies}
-                      deleteMovie={deleteMovie}
+                      removeMovie={deleteMovie}
                       shortMovies={shortMovies}
                       onShorts={handleShortsChangeMovies}
                       shortsIsChecked={shortsIsChecked}
-                      saveMovie={saveMovie}
+                      likeMovie={saveMovie}
                     />
                   }
                 ></Route>
@@ -293,8 +301,8 @@ function App() {
                   path="/saved-movies"
                   element={
                     <ProtectedRoute
-                      loggedIn={loggedIn}
                       element={SavedMovies}
+                      loggedIn={loggedIn}
                       onFindClick={handleFindClickSaved}
                       savedMovies={savedMovies}
                       savedFilteredMovies={savedFilteredMovies}
@@ -310,10 +318,10 @@ function App() {
                 path="/profile"
                 element={
                   <ProtectedRoute
-                    loggedIn={loggedIn}
                     element={ProfileLayout}
-                    logout={handleLogout}
+                    loggedIn={loggedIn}
                     handleUpdateProfile={handleUpdateProfile}
+                    logout={handleLogout}
                   />
                 }
               />
@@ -330,11 +338,15 @@ function App() {
                 path="/signup"
                 element={
                   <Register
-                    handleRegistration={handleRegister}
+                    handleRegister={handleRegister}
                     isLoading={isLoading}
                   />
                 }
               />
+              {/* <Route
+                path="/logout"
+                element={handleLogout()}
+              /> */}
             </>
           )}
           {<Route path="/*" element={<NotFoundPage />} />}

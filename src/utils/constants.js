@@ -1,6 +1,6 @@
 const BEATFILM_URL = "https://api.nomoreparties.co";
-const BASE_URL = "https://api.movies.nomoredomains.xyz";
-// const BASE_URL = "http://localhost:3000"
+// const BASE_URL = "https://api.movies.nomoredomains.xyz";
+const BASE_URL = "http://localhost:3000"
 const SHORT_FILM_MAX_DURATION = 40;
 const RENDERED_BASIC_CARDS = () => {
   const width = window.innerWidth;

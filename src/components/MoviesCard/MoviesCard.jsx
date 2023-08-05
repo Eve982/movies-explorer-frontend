@@ -1,5 +1,4 @@
 import "./MoviesCard.css";
-// import testfilm from '../../images/testfilm.png'
 import { useLocation } from "react-router-dom";
 import { BEATFILM_URL } from "../../utils/constants";
 import { useEffect, useState } from "react";
@@ -28,6 +27,7 @@ function MoviesCard({ movie, savedMovies, removeMovie, likeMovie }) {
   function handleLike(e) {
     e.preventDefault();
     if (!isSaved) {
+      console.log('like clicked');
       likeMovie(movie);
     } else {
       if (foundMovie && foundMovie._id) {

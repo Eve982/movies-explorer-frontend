@@ -57,6 +57,7 @@
 }
 
 .search-form__button {
+  background-image: url(../../images/find.svg);
   position: absolute;
   display: flex;
   justify-content: center;

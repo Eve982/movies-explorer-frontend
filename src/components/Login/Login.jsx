@@ -45,6 +45,7 @@ function Login({ handleLogin, isLoading }) {
               required
               onChange={handleChange}
               value={userLoginData.email}
+              autoComplete="current-password"
             />
           </label>
           <span className="form__error">{errors.email}</span>

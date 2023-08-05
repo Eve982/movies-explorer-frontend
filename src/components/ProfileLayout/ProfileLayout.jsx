@@ -5,7 +5,7 @@ function ProfileLayout({
   loggedIn,
   setPreloader,
   handleUpdateProfile,
-  onClickLogout,
+  logout,
 }) {
   return (
     <>
@@ -14,7 +14,7 @@ function ProfileLayout({
         loggedIn={loggedIn}
         setPreloader={setPreloader}
         onSubmit={handleUpdateProfile}
-        onClickLogout={onClickLogout}
+        logout={logout}
       />
     </>
   );
