@@ -40,6 +40,17 @@ class AuthApi {
       });
   }
 
+  logout() {
+    return fetch(`${BASE_URL}/signout`, {
+      ...this._BASECONFIG,
+      method: "POST",
+    })
+      .then(this._getServerResponse)
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
   checkTokenApi() {
     return fetch(`${BASE_URL}/users/me`, {
       ...this._BASECONFIG,

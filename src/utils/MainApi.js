@@ -18,7 +18,7 @@ class MainApi {
   }
 
   getSavedMovies() {
-    return fetch(`${this._baseUrl}/movies`, this._BASECONFIG).then(
+    return fetch(`${this._baseUrl}/movies/saved-movies`, this._BASECONFIG).then(
       this._getServerResponse,
     );
   }

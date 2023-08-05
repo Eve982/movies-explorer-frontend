@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import {
   RENDERED_BASIC_CARDS,
   RENDERED_MORE_CARD,
+  SHORT_FILM_MAX_DURATION,
 } from "../../utils/constants";
 
 function MoviesCardList({
@@ -13,6 +14,7 @@ function MoviesCardList({
   savedMovies,
   removeMovie,
   likeMovie,
+  shortsIsChecked,
 }) {
   const location = useLocation();
 
@@ -52,11 +54,11 @@ function MoviesCardList({
     return <p className="movies-card-list__empty">Ничего не найдено</p>;
   }
 
-  function renderContent() {
+  function renderContent(movies) {
     return (
       <>
         <ul className="movies-card-list">
-          {filteredMovies.slice(0, numberOfCardsShow).map((movie) => (
+          {movies.slice(0, numberOfCardsShow).map((movie) => (
             <MoviesCard
               key={movie.id || movie._id || movie.movieId}
               movie={movie}
@@ -67,7 +69,7 @@ function MoviesCardList({
             />
           ))}
         </ul>
-        {numberOfCardsShow < filteredMovies.length && (
+        {numberOfCardsShow < movies.length && (
           <button className="movies-card-list__button-more" onClick={showMore}>
             Еще
           </button>
@@ -78,13 +80,13 @@ function MoviesCardList({
 
   function renderMovies() {
     if (location.pathname === "/saved-movies") {
-      return renderContent();
+      return renderContent(shortsIsChecked ? savedMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : savedMovies);
     } else {
       return localStorage.getItem("filteredMovies") ? (
         filteredMovies.length === 0 ? (
           renderEmptySearch()
         ) : (
-          renderContent()
+          renderContent(shortsIsChecked ? filteredMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : filteredMovies)
         )
       ) : (
         <></>

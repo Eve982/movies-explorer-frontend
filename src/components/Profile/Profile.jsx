@@ -5,7 +5,6 @@ import "./Profile.css";
 
 function Profile({ onSubmit, logout }) {
   const currentUser = useContext(CurrentUserContext);
-  console.log('Profile currentUser: ', currentUser);
   const [userData, setUserData] = useState({
     name: "",
     email: "",

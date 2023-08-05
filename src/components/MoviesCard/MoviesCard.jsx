@@ -27,18 +27,17 @@ function MoviesCard({ movie, savedMovies, removeMovie, likeMovie }) {
   function handleLike(e) {
     e.preventDefault();
     if (!isSaved) {
-      console.log('like clicked');
       likeMovie(movie);
     } else {
       if (foundMovie && foundMovie._id) {
-        removeMovie(foundMovie._id);
+        removeMovie(foundMovie);
       }
     }
   }
 
   function handleRemove(e) {
     e.preventDefault();
-    removeMovie(movie._id);
+    removeMovie(movie);
   }
 
   const location = useLocation();

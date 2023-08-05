@@ -12,7 +12,6 @@ import ProfileLayout from "../ProfileLayout/ProfileLayout";
 import Preloader from "../Preloader/Preloader";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import authApi from "../../utils/AuthApi.js";
-// import { register, login, checkTokenApi } from "../../utils/AuthApi.js";
 import mainApi from "../../utils/MainApi.js";
 import * as moviesApi from "../../utils/MoviesApi";
 import * as filters from "../../utils/filters";
@@ -68,7 +67,7 @@ function App() {
         showErrorPopup(err);
       });
   }
-  console.log("CurrentUser: ", currentUser);
+
   function handleLogin(data) {
     authApi
       .login(data)
@@ -97,7 +96,6 @@ function App() {
   }, []);
 
   function handleLogout() {
-    navigate("/", { replace: true });
     localStorage.removeItem("movies");
     localStorage.removeItem("searchKey");
     localStorage.removeItem("filteredMovies");
@@ -113,20 +111,9 @@ function App() {
     setSavedFilteredMovies(false);
     setFilteredMovies([]);
     setShortMovies([]);
+    authApi.logout();
+    navigate("/", { replace: true });
   }
-
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     Promise.all([mainApi.getUserInfo(), mainApi.getSavedMovies()])
-  //       .then(([userData, moviesData]) => {
-  //         setCurrentUser(userData);
-  //         setSavedMovies(moviesData);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }, [loggedIn]);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -135,8 +122,7 @@ function App() {
       mainApi
         .getUserInfo()
         .then((res) => {
-          setCurrentUser(res.data);
-          console.log("IsLogged_UseEffect_currentUser: ", currentUser);
+          setCurrentUser(res);
         })
         .catch((err) => {
           console.log(err);
@@ -160,7 +146,6 @@ function App() {
     const filteredMovies = filters.filterByKeyWord(inputValue, moviesArray);
     localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
     localStorage.setItem("searchKey", inputValue);
-    console.log("inputValue: ", inputValue);
     setFilteredMovies(filteredMovies);
 
     if (shortsIsChecked) {
@@ -191,7 +176,6 @@ function App() {
       .updateUserInfo({ name: userData.name, email: userData.email })
       .then((res) => {
         setCurrentUser(res);
-        console.log("handleUpdateProfile_currentUser: ", currentUser);
         setIsLoading(false);
         setInfoToolTipText(`Данные профиля обновлены.`);
         setInfoToolTipOpen(true);
@@ -219,7 +203,7 @@ function App() {
   }
 
   function deleteMovie(movie) {
-    mainApi.deleteMovie(movie._id).then(() => {
+    mainApi.deleteMovie(movie.movieId).then(() => {
       setSavedMovies((state) => state.filter((m) => m._id !== movie._id));
     });
   }
@@ -306,7 +290,7 @@ function App() {
                       onFindClick={handleFindClickSaved}
                       savedMovies={savedMovies}
                       savedFilteredMovies={savedFilteredMovies}
-                      deleteMovie={deleteMovie}
+                      removeMovie={deleteMovie}
                       shortMovies={shortMoviesSaved}
                       shortsIsChecked={shortsSavedIsChecked}
                       onShorts={handleShortsChangeSaved}
@@ -343,10 +327,13 @@ function App() {
                   />
                 }
               />
-              {/* <Route
-                path="/logout"
-                element={handleLogout()}
-              /> */}
+              <Route
+                path="/signout"
+                element={() => {
+                  handleLogout();
+                  return <></>;
+                }}
+              />
             </>
           )}
           {<Route path="/*" element={<NotFoundPage />} />}
