@@ -4,14 +4,14 @@ import { useState } from "react";
 
 function SavedMovies({
   onFindClick,
-  savedMovies,
-  likeMovie,
-  removeMovie,
   savedFilteredMovies,
-  onShorts,
-  shortsIsChecked,
+  savedMovies,
+  saveMovie,
+  deleteMovie,
   shortMovies,
-  loggedIn,
+
+  isCheckBoxActive,
+  handleCheckBoxActive,
 }) {
   const [searchKeySaved, setSearchKeySaved] = useState("");
   function handleInputChange(e) {
@@ -25,15 +25,15 @@ function SavedMovies({
         onFindClick={onFindClick}
         searchKeySaved={searchKeySaved}
         onInputChange={handleInputChange}
-        onShorts={onShorts}
-        shortsIsCheckedSaved={shortsIsChecked}
+        handleCheckBoxActive={handleCheckBoxActive}
+        isCheckBoxActive={isCheckBoxActive}
       />
       <MoviesCardList
         likedMovies={savedMovies}
-        filteredMovies={shortsIsChecked ? shortMovies : savedFilteredMovies}
-        removeMovie={removeMovie}
-        shortsIsChecked={shortsIsChecked}
-        likeMovie={likeMovie}
+        filteredMovies={isCheckBoxActive ? shortMovies : savedFilteredMovies}
+        deleteMovie={deleteMovie}
+        isCheckBoxActive={isCheckBoxActive}
+        saveMovie={saveMovie}
         savedMovies={savedMovies}
       />
     </main>

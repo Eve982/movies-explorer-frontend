@@ -1,7 +1,7 @@
-import "./MoviesCardList.css";
-import { useLocation } from "react-router-dom";
-import MoviesCard from "../MoviesCard/MoviesCard";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import "./MoviesCardList.css";
+import MoviesCard from "../MoviesCard/MoviesCard";
 import {
   RENDERED_BASIC_CARDS,
   RENDERED_MORE_CARD,
@@ -12,9 +12,9 @@ function MoviesCardList({
   filteredMovies,
   defineLikedMovies,
   savedMovies,
-  removeMovie,
-  likeMovie,
-  shortsIsChecked,
+  deleteMovie,
+  saveMovie,
+  isCheckBoxMoviesActive,
 }) {
   const location = useLocation();
 
@@ -64,8 +64,8 @@ function MoviesCardList({
               movie={movie}
               defineLikedMovies={defineLikedMovies}
               savedMovies={savedMovies}
-              removeMovie={removeMovie}
-              likeMovie={likeMovie}
+              deleteMovie={deleteMovie}
+              saveMovie={saveMovie}
             />
           ))}
         </ul>
@@ -80,13 +80,13 @@ function MoviesCardList({
 
   function renderMovies() {
     if (location.pathname === "/saved-movies") {
-      return renderContent(shortsIsChecked ? savedMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : savedMovies);
+      return renderContent(isCheckBoxMoviesActive ? savedMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : savedMovies);
     } else {
       return localStorage.getItem("filteredMovies") ? (
         filteredMovies.length === 0 ? (
           renderEmptySearch()
         ) : (
-          renderContent(shortsIsChecked ? filteredMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : filteredMovies)
+          renderContent(isCheckBoxMoviesActive ? filteredMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : filteredMovies)
         )
       ) : (
         <></>

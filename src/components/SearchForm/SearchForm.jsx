@@ -6,9 +6,8 @@ function SearchForm({
   onFindClick,
   handleInputChange,
   searchKey,
-  onShorts,
-  shortsIsChecked,
-  searchKeySaved,
+  isCheckBoxActive,
+  handleCheckBoxActive,
 }) {
   const [searchError, setSearchError] = useState(null);
   const [searchFormInput, setSearchFormInput] = useState(null);
@@ -62,8 +61,8 @@ function SearchForm({
       </form>
       <span className="searchForm__error"></span>
       <FilterCheckbox
-        onShorts={onShorts}
-        shortsIsChecked={shortsIsChecked}
+        isCheckBoxActive={isCheckBoxActive}
+        handleCheckBoxActive={handleCheckBoxActive}
       ></FilterCheckbox>
     </div>
   );

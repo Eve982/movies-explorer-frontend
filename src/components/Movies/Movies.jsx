@@ -4,15 +4,14 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import SearchForm from "../SearchForm/SearchForm";
 
 function Movies({
-  filteredMovies,
   onFindClick,
+  filteredMovies,
   savedMovies,
-  likeMovie,
-  removeMovie,
-  onShorts,
-  shortsIsChecked,
+  saveMovie,
+  deleteMovie,
+  handleCheckBoxActive,
+  isCheckBoxMoviesActive,
   shortMovies,
-  loggedIn,
 }) {
   const [searchKey, setSearchKey] = useState("");
 
@@ -35,14 +34,14 @@ function Movies({
         onFindClick={onFindClick}
         searchKey={searchKey}
         handleInputChange={handleInputChange}
-        onShorts={onShorts}
-        shortsIsChecked={shortsIsChecked}
+        handleCheckBoxActive={handleCheckBoxActive}
+        isCheckBoxMoviesActive={isCheckBoxMoviesActive}
       ></SearchForm>
       <MoviesCardList
-        filteredMovies={shortsIsChecked ? shortMovies : filteredMovies}
+        filteredMovies={isCheckBoxMoviesActive ? shortMovies : filteredMovies}
         savedMovies={savedMovies}
-        removeMovie={removeMovie}
-        likeMovie={likeMovie}
+        deleteMovie={deleteMovie}
+        saveMovie={saveMovie}
       ></MoviesCardList>
     </main>
   );

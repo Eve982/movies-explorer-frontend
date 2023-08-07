@@ -1,14 +1,16 @@
+// import React, { useEffect } from "react";
 import "./FilterCheckbox.css";
 
-function FilterCheckbox({ onShorts, shortsIsChecked }) {
+function FilterCheckbox({ handleCheckBoxActive, isCheckBoxActive }) {
+
   return (
     <div className="filter-checkbox">
       <input
         className="filter-checkbox__input"
         type="checkbox"
         id="checkbox"
-        checked={shortsIsChecked}
-        onChange={onShorts}
+        checked={isCheckBoxActive}
+        onChange={handleCheckBoxActive}
       />
       <label htmlFor="checkbox" className="filter-checkbox__label">
         Короткометражки
@@ -16,5 +18,4 @@ function FilterCheckbox({ onShorts, shortsIsChecked }) {
     </div>
   );
 }
-
 export default FilterCheckbox;

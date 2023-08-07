@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import Main from "../Main/Main";
 import "./App.css";
 import Movies from "../Movies/Movies";
@@ -15,26 +16,36 @@ import authApi from "../../utils/AuthApi.js";
 import mainApi from "../../utils/MainApi.js";
 import * as moviesApi from "../../utils/MoviesApi";
 import * as filters from "../../utils/filters";
-import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
 function App() {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState({});
-  const [loggedIn, setLoggedIn] = useState(false);
+  // const location = useLocation();
+  // const [currentPath, setCurrentPath] = useState("");
+
+  const [isLoading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState({
+    _id: "",
+    name: "",
+    email: "",
+    isLoggedIn: false,
+  });
 
   const [isInfoToolTipOpen, setInfoToolTipOpen] = useState(false);
-  const [infoToolTipText, setInfoToolTipText] = useState("");
+  const [infoToolTip, setInfoToolTip] = useState({
+    text: "",
+    status: false,
+  });
 
-  const [shortsSavedIsChecked, setShortsSavedIsChecked] = useState(false);
+  const [isCheckBoxMoviesActive, setCheckBoxMoviesActive] = useState(false);
+  const [isCheckBoxSavedMoviesActive, setCheckBoxSavedMoviesActive] =
+    useState(false);
+
   const [shortMovies, setShortMovies] = useState([]);
   const [shortMoviesSaved, setShortMoviesSaved] = useState([]);
-
   const [savedMovies, setSavedMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [savedFilteredMovies, setSavedFilteredMovies] = useState([]);
-  const [shortsIsChecked, setShortsIsChecked] = useState(false);
 
   useEffect(() => {
     function closeByEscape(e) {
@@ -50,31 +61,45 @@ function App() {
     }
   }, [isInfoToolTipOpen]);
 
-  function showErrorPopup(textError) {
-    setInfoToolTipText(textError.message);
+  function showErrorPopup(textError, isSuccess) {
+    setInfoToolTip({ text: textError.message, status: isSuccess });
     setInfoToolTipOpen(true);
   }
 
   function handleRegister(data) {
     authApi
       .register(data)
-      .then((res) => {
-        setLoggedIn(true);
-        setCurrentUser(data);
-        navigate("/movies");
-      })
+      .then((res) => handleLogin(data.email, data.password))
       .catch((err) => {
-        showErrorPopup(err);
+        showErrorPopup(err, false);
       });
   }
 
   function handleLogin(data) {
     authApi
       .login(data)
-      .then((res) => {
-        setLoggedIn(true);
-        setCurrentUser(data);
+      .then((userData) => {
+        setCurrentUser({
+          ...userData,
+          isLoggedIn: true,
+        });
         navigate("/movies");
+      })
+      .catch((err) => {
+        showErrorPopup(err, false);
+      });
+  }
+
+  function handleUpdateProfile(data) {
+    mainApi
+      .updateUserInfo(data)
+      .then((userData) => {
+        setCurrentUser({
+          ...currentUser,
+          ...userData,
+        });
+        setInfoToolTip({ text: `Данные профиля обновлены!`, status: true });
+        setInfoToolTipOpen(true);
       })
       .catch((err) => {
         showErrorPopup(err);
@@ -82,62 +107,113 @@ function App() {
   }
 
   function checkToken() {
-    authApi
-      .checkTokenApi()
-      .then((data) => {
-        setLoggedIn(true);
-        setCurrentUser(data);
+    // const isLoggedIn = currentUser.isLoggedIn;
+    // setCurrentPath(location.pathname);
+    mainApi
+      .getUserInfo()
+      .then((userData) => {
+        setCurrentUser({
+          ...userData,
+          isLoggedIn: true,
+        });
         navigate("/movies");
+        // navigate(`${currentPath ? currentPath : "/movies"}`);
       })
-      .catch((err) => console.log("authorization needed", err));
+      .catch((err) => {
+        handleLogout();
+        console.log(err);
+      });
   }
+
   useEffect(() => {
     checkToken();
+
+    const filteredMovies = localStorage.getItem("filteredMovies");
+    const shortMovies = localStorage.getItem("shortMovies");
+    const isCheckBoxMoviesActive = localStorage.getItem(
+      "isCheckBoxMoviesActive",
+    );
+    if (filteredMovies) {
+      setFilteredMovies(JSON.parse(filteredMovies));
+    }
+    if (shortMovies) {
+      setShortMovies(JSON.parse(shortMovies));
+    }
+    if (isCheckBoxMoviesActive) {
+      setCheckBoxMoviesActive(JSON.parse(isCheckBoxMoviesActive));
+    }
   }, []);
+
+  useEffect(() => {
+    if (currentUser.isLoggedIn) {
+      setLoading(true);
+      Promise.all([
+        mainApi.getUserInfo(),
+        moviesApi.getInitialMovies(),
+        mainApi.getSavedMovies(),
+      ])
+        .then(([userData, moviesData, savedMovies]) => {
+          setCurrentUser({
+            ...userData,
+            isLoggedIn: true,
+          });
+          localStorage.setItem("movies", JSON.stringify(moviesData));
+          setSavedMovies(savedMovies);
+          setSavedFilteredMovies(savedMovies);
+        })
+        .then((res) => setLoading(false))
+        .catch((err) => {
+          showErrorPopup(err, false);
+        });
+    }
+    return;
+  }, [currentUser.isLoggedIn]);
+
+  // function getUserInfo() {
+  //   mainApi.getUserInfo().then((userData) => {
+  //     setCurrentUser({
+  //       ...userData,
+  //       isLoggedIn: true,
+  //     });
+  //   });
+  // }
+
+  // function getSavedMovies() {
+  //   mainApi
+  //     .getSavedMovies()
+  //     .then((res) => {
+  //       setSavedMovies(res);
+  //       setSavedFilteredMovies(res);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }
 
   function handleLogout() {
     localStorage.removeItem("movies");
     localStorage.removeItem("searchKey");
     localStorage.removeItem("filteredMovies");
-    localStorage.removeItem("token");
+    // localStorage.removeItem("jwt");
     localStorage.removeItem("shortMovies");
-    localStorage.removeItem("shortsIsChecked");
-    setLoggedIn(false);
-    setCurrentUser({});
+    localStorage.removeItem("isCheckBoxMoviesActive");
+    localStorage.removeItem("isCheckBoxSavedMoviesActive");
+    setCurrentUser({
+      _id: "",
+      name: "",
+      email: "",
+      isLoggedIn: false,
+    });
     setSavedMovies([]);
     setFilteredMovies([]);
-    setShortsSavedIsChecked(false);
+    setCheckBoxMoviesActive(false);
+    setCheckBoxSavedMoviesActive(false);
+    setShortMovies([]);
     setShortMoviesSaved([]);
     setSavedFilteredMovies(false);
-    setFilteredMovies([]);
-    setShortMovies([]);
     authApi.logout();
     navigate("/", { replace: true });
   }
-
-  useEffect(() => {
-    if (!loggedIn) {
-      return;
-    } else {
-      mainApi
-        .getUserInfo()
-        .then((res) => {
-          setCurrentUser(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      moviesApi
-        .getInitialMovies()
-        .then((res) => {
-          localStorage.setItem("movies", JSON.stringify(res));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [loggedIn]);
+  // const token = localStorage.getItem("jwt");
+  // console.log('APP localStorage.getItem("token"): ', token);
 
   function handleFindClickMovies(e) {
     e.preventDefault();
@@ -148,7 +224,7 @@ function App() {
     localStorage.setItem("searchKey", inputValue);
     setFilteredMovies(filteredMovies);
 
-    if (shortsIsChecked) {
+    if (isCheckBoxMoviesActive) {
       const shortMovies = filters.findShorts(filteredMovies);
       setShortMovies(shortMovies);
       localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
@@ -164,28 +240,10 @@ function App() {
     );
     setSavedFilteredMovies(filteredSavedMovies);
 
-    if (shortsSavedIsChecked) {
+    if (isCheckBoxMoviesActive) {
       const shortMoviesSaved = filters.findShorts(filteredSavedMovies);
       setShortMoviesSaved(shortMoviesSaved);
     }
-  }
-
-  function handleUpdateProfile(userData) {
-    setIsLoading(true);
-    mainApi
-      .updateUserInfo({ name: userData.name, email: userData.email })
-      .then((res) => {
-        setCurrentUser(res);
-        setIsLoading(false);
-        setInfoToolTipText(`Данные профиля обновлены.`);
-        setInfoToolTipOpen(true);
-      })
-      .catch((err) => {
-        showErrorPopup(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
   }
 
   function saveMovie(movie) {
@@ -198,7 +256,7 @@ function App() {
         });
       })
       .catch((err) => {
-        showErrorPopup(err);
+        showErrorPopup(err, false);
       });
   }
 
@@ -208,102 +266,69 @@ function App() {
     });
   }
 
-  function handleShortsChangeMovies() {
-    localStorage.setItem("shortsIsChecked", !shortsIsChecked);
-    setShortsIsChecked(!shortsIsChecked);
+  function handleCheckBoxMoviesActive() {
+    setCheckBoxMoviesActive(!isCheckBoxMoviesActive);
+    localStorage.setItem("isCheckBoxMoviesActive", isCheckBoxMoviesActive);
     const shortMovies = filters.findShorts(filteredMovies);
     setShortMovies(shortMovies);
     localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
   }
 
-  function handleShortsChangeSaved() {
-    setShortsSavedIsChecked(!shortsSavedIsChecked);
-    const shortMoviesSaved = filters.findShorts(savedFilteredMovies);
-    setShortMoviesSaved(shortMoviesSaved);
+  function handleCheckBoxSavedMoviesActive() {
+    setCheckBoxSavedMoviesActive(!isCheckBoxSavedMoviesActive);
+    // const shortMoviesSaved = filters.findShorts(savedFilteredMovies);
+    // setShortMoviesSaved(shortMoviesSaved);
   }
-
-  useEffect(() => {
-    if (!loggedIn) {
-      return;
-    } else {
-      mainApi
-        .getSavedMovies()
-        .then((res) => {
-          setSavedMovies(res);
-          setSavedFilteredMovies(res);
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [loggedIn, currentUser]);
-
-  useEffect(() => {
-    const filteredMovies = localStorage.getItem("filteredMovies");
-    const shortMovies = localStorage.getItem("shortMovies");
-    const shortsIsChecked = localStorage.getItem("shortsIsCheckedMovies");
-
-    if (filteredMovies) {
-      setFilteredMovies(JSON.parse(filteredMovies));
-    }
-
-    if (shortMovies) {
-      setShortMovies(JSON.parse(shortMovies));
-    }
-
-    if (shortsIsChecked) {
-      setShortsIsChecked(JSON.parse(shortsIsChecked));
-    }
-  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App">
         {isLoading && <Preloader />}
         <Routes>
-          <Route path={"/"} element={<Main loggedIn={loggedIn} />} />
-          {loggedIn ? (
+          <Route path={"/"} element={<Main />} />
+          {currentUser.isLoggedIn ? (
             <>
-              <Route element={<Layout loggedIn={loggedIn} />}>
+              <Route element={<Layout />}>
                 <Route
                   path="/movies"
                   element={
                     <ProtectedRoute
                       element={Movies}
-                      loggedIn={loggedIn}
                       onFindClick={handleFindClickMovies}
                       filteredMovies={filteredMovies}
                       savedMovies={savedMovies}
-                      removeMovie={deleteMovie}
+                      saveMovie={saveMovie}
+                      deleteMovie={deleteMovie}
                       shortMovies={shortMovies}
-                      onShorts={handleShortsChangeMovies}
-                      shortsIsChecked={shortsIsChecked}
-                      likeMovie={saveMovie}
+                      isCheckBoxActive={isCheckBoxMoviesActive}
+                      handleCheckBoxActive={handleCheckBoxMoviesActive}
                     />
                   }
-                ></Route>
+                />
 
                 <Route
                   path="/saved-movies"
                   element={
                     <ProtectedRoute
                       element={SavedMovies}
-                      loggedIn={loggedIn}
                       onFindClick={handleFindClickSaved}
-                      savedMovies={savedMovies}
                       savedFilteredMovies={savedFilteredMovies}
-                      removeMovie={deleteMovie}
+                      savedMovies={savedMovies}
+                      saveMovie={saveMovie}
+                      deleteMovie={deleteMovie}
                       shortMovies={shortMoviesSaved}
-                      shortsIsChecked={shortsSavedIsChecked}
-                      onShorts={handleShortsChangeSaved}
+                      isCheckBoxActive={isCheckBoxSavedMoviesActive}
+                      handleCheckBoxActive={handleCheckBoxSavedMoviesActive}
                     />
                   }
                 />
               </Route>
+
               <Route
                 path="/profile"
                 element={
                   <ProtectedRoute
                     element={ProfileLayout}
-                    loggedIn={loggedIn}
                     handleUpdateProfile={handleUpdateProfile}
                     logout={handleLogout}
                   />
@@ -315,16 +340,24 @@ function App() {
               <Route
                 path="/signin"
                 element={
-                  <Login handleLogin={handleLogin} isLoading={isLoading} />
+                  !currentUser.isLoggedIn ? (
+                    <Login handleLogin={handleLogin} isLoading={isLoading} />
+                  ) : (
+                    navigate("/movies")
+                  )
                 }
               />
               <Route
                 path="/signup"
                 element={
-                  <Register
-                    handleRegister={handleRegister}
-                    isLoading={isLoading}
-                  />
+                  !currentUser.isLoggedIn ? (
+                    <Register
+                      handleRegister={handleRegister}
+                      isLoading={isLoading}
+                    />
+                  ) : (
+                    navigate("/movies")
+                  )
                 }
               />
               <Route
@@ -341,7 +374,7 @@ function App() {
         <InfoToolTip
           isOpen={isInfoToolTipOpen}
           onClose={() => setInfoToolTipOpen(false)}
-          message={infoToolTipText}
+          infoToolTip={infoToolTip}
         />
       </div>
     </CurrentUserContext.Provider>

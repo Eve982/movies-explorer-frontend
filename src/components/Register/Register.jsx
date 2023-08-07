@@ -1,7 +1,6 @@
-import "./Register.css";
 import { useState } from "react";
-
 import { Link } from "react-router-dom";
+import "./Register.css";
 import formLink from "../../images/formLink.svg";
 
 function Register({ handleRegister, isLoading }) {
@@ -85,11 +84,8 @@ function Register({ handleRegister, isLoading }) {
         </div>
         <div className="form__buttons-section">
           <button
-            className={
-              isValid
-                ? "form__submit-button"
-                : "form__submit-button form__submit-button_disabled"
-            }
+            className={`form__submit-button
+              ${isValid ? "" : "form__submit-button_disabled"}`}
             type="submit"
             disabled={isLoading ? "disabled" : ""}
           >

@@ -1,18 +1,13 @@
-import "./MoviesCard.css";
-import { useLocation } from "react-router-dom";
-import { BEATFILM_URL } from "../../utils/constants";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import "./MoviesCard.css";
+import { BEATFILM_URL } from "../../utils/constants";
+import calculateHours from "../../utils/handlers";
 
-function MoviesCard({ movie, savedMovies, removeMovie, likeMovie }) {
+function MoviesCard({ movie, savedMovies, deleteMovie, saveMovie }) {
+  const location = useLocation();
   const imageUrlValue = movie.image.url;
   const imageUrl = imageUrlValue ? BEATFILM_URL + imageUrlValue : movie.image;
-
-  function calculateHours(minutes) {
-    const HH = Math.floor(minutes / 60);
-    const MM = minutes % 60;
-    return `${HH !== 0 ? `${HH}ч` : ""} ${MM}м`;
-  }
-
   const [isSaved, setIsSaved] = useState(false);
   const [foundMovie, setFoundMovie] = useState(null);
 
@@ -27,20 +22,18 @@ function MoviesCard({ movie, savedMovies, removeMovie, likeMovie }) {
   function handleLike(e) {
     e.preventDefault();
     if (!isSaved) {
-      likeMovie(movie);
+      saveMovie(movie);
     } else {
       if (foundMovie && foundMovie._id) {
-        removeMovie(foundMovie);
+        deleteMovie(foundMovie);
       }
     }
   }
 
   function handleRemove(e) {
     e.preventDefault();
-    removeMovie(movie);
+    deleteMovie(movie);
   }
-
-  const location = useLocation();
 
   return (
     <li className="movies-card">
@@ -63,7 +56,7 @@ function MoviesCard({ movie, savedMovies, removeMovie, likeMovie }) {
               isSaved ? "movies-card__like_active" : ""
             }`}
             type="button"
-            onClick={handleLike}
+            onClick={isSaved ? handleRemove : handleLike}
           />
         )}
       </div>

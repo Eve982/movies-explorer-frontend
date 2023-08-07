@@ -18,7 +18,7 @@ class AuthApi {
   }
 
   register({ name, email, password }) {
-    return fetch(`${BASE_URL}/signup`, {
+    return fetch(`${this._baseUrl}/signup`, {
       ...this._BASECONFIG,
       method: "POST",
       body: JSON.stringify({ name, email, password }),
@@ -26,7 +26,7 @@ class AuthApi {
   }
 
   login({ email, password }) {
-    return fetch(`${BASE_URL}/signin`, {
+    return fetch(`${this._baseUrl}/signin`, {
       ...this._BASECONFIG,
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -34,14 +34,16 @@ class AuthApi {
       .then(this._getServerResponse)
       .then((data) => {
         if (data.token) {
-          localStorage.setItem("jwt", data.token);
+          // console.log('data.token: ', data.token);
+          // localStorage.setItem("jwt", data.token);
+          // console.log('API localStorage.getItem("jwt",: ', localStorage.getItem("jwt"));
           return data;
         }
       });
   }
 
   logout() {
-    return fetch(`${BASE_URL}/signout`, {
+    return fetch(`${this._baseUrl}/signout`, {
       ...this._BASECONFIG,
       method: "POST",
     })
@@ -49,13 +51,6 @@ class AuthApi {
       .then((data) => {
         console.log(data);
       });
-  }
-
-  checkTokenApi() {
-    return fetch(`${BASE_URL}/users/me`, {
-      ...this._BASECONFIG,
-      method: "GET",
-    }).then(this._getServerResponse);
   }
 }
 

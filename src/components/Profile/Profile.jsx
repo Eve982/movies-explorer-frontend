@@ -35,13 +35,10 @@ function Profile({ onSubmit, logout }) {
   }
 
   useEffect(() => {
-    if (currentUser) {
-      setUserData({
-        name: currentUser.name,
-        email: currentUser.email,
-      });
+    if (currentUser.name && currentUser.email) {
+      setUserData({name: currentUser.name, email: currentUser.email});
     }
-  }, [currentUser]);
+  }, [currentUser.name, currentUser.email]);
 
   useEffect(() => {
     setNewInfo(

@@ -1,17 +1,19 @@
-import "./Header.css";
+import { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import logo from "../../images/logo.svg";
+import "./Header.css";
+import NavigationPopup from "../NavigationPopup/NavigationPopup";
 import NavAuth from "../NavAuth/NavAuth";
 import NavMain from "../NavMain/NavMain";
-import { useState } from "react";
-import NavigationPopup from "../NavigationPopup/NavigationPopup";
 
-function Header({ loggedIn }) {
+function Header() {
+  const currentUser = useContext(CurrentUserContext);
   const location = useLocation();
-  const [menuIsOpened, setMenuIsOpened] = useState(false);
+  const [isBurgerOpened, setBurgerOpened] = useState(false);
 
-  function handleMenuClick() {
-    setMenuIsOpened(!menuIsOpened);
+  function handleBurgerClick() {
+    setBurgerOpened(!isBurgerOpened);
   }
 
   return (
@@ -21,18 +23,20 @@ function Header({ loggedIn }) {
       <Link to="/">
         <img className="header__logo" src={logo} alt="логотип" />
       </Link>
-      {loggedIn ? <NavMain /> : <NavAuth />}
-      {!loggedIn || (
+      {currentUser.isLoggedIn ? <NavMain /> : <NavAuth />}
+      {!currentUser.isLoggedIn || (
         <button
           className={
-            menuIsOpened ? "header__burger-menu_active" : "header__burger-menu"
+            isBurgerOpened
+              ? "header__burger-menu_active"
+              : "header__burger-menu"
           }
           type="button"
           aria-label="Burger-menu"
-          onClick={handleMenuClick}
+          onClick={handleBurgerClick}
         />
       )}
-      {menuIsOpened && <NavigationPopup onClose={handleMenuClick} />}
+      {isBurgerOpened && <NavigationPopup onClose={handleBurgerClick} />}
     </header>
   );
 }

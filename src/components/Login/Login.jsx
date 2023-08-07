@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import "./Login.css";
 import formLink from "../../images/formLink.svg";
+// import Input from "../Input/Input";
 
 function Login({ handleLogin, isLoading }) {
   const [userLoginData, setUserLoginData] = useState({
@@ -34,18 +35,23 @@ function Login({ handleLogin, isLoading }) {
             <img className="form__image" src={formLink} alt="логотип" />
           </Link>
           <h2 className="form__title">Рады видеть!</h2>
+          {/* <Input
+            label="Email"
+            type="email"
+            autoComplete="email"
+            value={userLoginData.email}
+          ></Input> */}
           <label className="form__input-lable">
             Email
             <input
               className="form__input"
               type="email"
               name="email"
-              id="name"
               placeholder="Email"
               required
               onChange={handleChange}
               value={userLoginData.email}
-              autoComplete="current-password"
+              autoComplete="email"
             />
           </label>
           <span className="form__error">{errors.email}</span>
@@ -68,11 +74,8 @@ function Login({ handleLogin, isLoading }) {
         </div>
         <div className="form__buttons-section">
           <button
-            className={
-              isValid
-                ? "form__submit-button form__submit-button_login"
-                : "form__submit-button form__submit-button_login form__submit-button_disabled"
-            }
+            className={`form__submit-button form__submit-button_login
+              ${isValid ? "" : "form__submit-button_disabled"}`}
             type="submit"
             disabled={isLoading ? "disabled" : ""}
           >

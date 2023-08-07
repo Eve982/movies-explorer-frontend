@@ -1,27 +1,35 @@
 const BEATFILM_URL = "https://api.nomoreparties.co";
-const BASE_URL = "https://api.movies.nomoredomains.xyz";
-// const BASE_URL = "http://localhost:3000"
+// const BASE_URL = "https://api.movies.nomoredomains.xyz";
+const BASE_URL = "http://localhost:3000";
 const SHORT_FILM_MAX_DURATION = 40;
+const WIDTH_MEDIUM = 768;
+const WIDTH_BIG = 1280;
+const MOVIES_ON_MEDIUM_SCREEN = 5;
+const MOVIES_ON_BIG_SCREEN = 8;
+const MOVIES_ON_HUGE_SCREEN = 12;
+const MORE_MOVIES_ON_BIG_SCREEN = 2;
+const MORE_MOVIES_ON_HUGE_SCREEN = 3;
+
 const RENDERED_BASIC_CARDS = () => {
   const width = window.innerWidth;
-  if (width < 768) {
-    return 5;
+  if (width < WIDTH_MEDIUM) {
+    return MOVIES_ON_MEDIUM_SCREEN;
   }
-  if (width < 1280) {
-    return 8;
+  if (width < WIDTH_BIG) {
+    return MOVIES_ON_BIG_SCREEN;
   }
 
-  return 12;
+  return MOVIES_ON_HUGE_SCREEN;
 };
 
 const RENDERED_MORE_CARD = () => {
   const width = window.innerWidth;
 
-  if (width < 1280) {
-    return 2;
+  if (width < WIDTH_BIG) {
+    return MORE_MOVIES_ON_BIG_SCREEN;
   }
 
-  return 3;
+  return MORE_MOVIES_ON_HUGE_SCREEN;
 };
 
 export {

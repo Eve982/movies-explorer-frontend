@@ -1,21 +1,11 @@
 import Header from "../Header/Header";
 import Profile from "../Profile/Profile";
 
-function ProfileLayout({
-  loggedIn,
-  setPreloader,
-  handleUpdateProfile,
-  logout,
-}) {
+function ProfileLayout({ handleUpdateProfile, logout }) {
   return (
     <>
-      <Header loggedIn={loggedIn} />
-      <Profile
-        loggedIn={loggedIn}
-        setPreloader={setPreloader}
-        onSubmit={handleUpdateProfile}
-        logout={logout}
-      />
+      <Header />
+      <Profile onSubmit={handleUpdateProfile} logout={logout} />
     </>
   );
 }

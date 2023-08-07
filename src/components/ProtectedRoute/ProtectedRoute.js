@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 function ProtectedRoute({ element: Component, ...props }) {
-  return (props.loggedIn ? <Component {...props} /> : <Navigate to="/" replace/>);
+  const currentUser = useContext(CurrentUserContext);
+  return currentUser.isLoggedIn ? (
+    <Component {...props} />
+  ) : (
+    <Navigate to="/" replace />
+  );
 }
-
 
 export default ProtectedRoute;

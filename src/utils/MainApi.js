@@ -70,6 +70,7 @@ class MainApi {
 
 const mainApi = new MainApi({
   baseUrl: BASE_URL,
+  // method: "GET",
   mode: "cors",
   credentials: "include",
   headers: {
