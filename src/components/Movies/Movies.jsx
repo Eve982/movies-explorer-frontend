@@ -1,7 +1,6 @@
 import "./Movies.css";
-import { useState, useEffect } from "react";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import SearchForm from "../SearchForm/SearchForm";
+import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 function Movies({
   onFindClick,
@@ -9,39 +8,23 @@ function Movies({
   savedMovies,
   saveMovie,
   deleteMovie,
-  handleCheckBoxActive,
-  isCheckBoxMoviesActive,
   shortMovies,
+  isCheckBoxActive,
+  handleCheckBoxActive,
 }) {
-  const [searchKey, setSearchKey] = useState("");
-
-  useEffect(() => {
-    const searchKey = localStorage.getItem("searchKey");
-    if (searchKey) {
-      setSearchKey(searchKey);
-    }
-  }, []);
-
-  function handleInputChange(e) {
-    const value = e.target.value;
-    e.preventDefault();
-    setSearchKey(value);
-  }
-
   return (
     <main className="movies">
       <SearchForm
+        parent="movies"
         onFindClick={onFindClick}
-        searchKey={searchKey}
-        handleInputChange={handleInputChange}
+        isCheckBoxActive={isCheckBoxActive}
         handleCheckBoxActive={handleCheckBoxActive}
-        isCheckBoxMoviesActive={isCheckBoxMoviesActive}
       ></SearchForm>
       <MoviesCardList
-        filteredMovies={isCheckBoxMoviesActive ? shortMovies : filteredMovies}
+        filteredMovies={isCheckBoxActive ? shortMovies : filteredMovies}
         savedMovies={savedMovies}
-        deleteMovie={deleteMovie}
         saveMovie={saveMovie}
+        deleteMovie={deleteMovie}
       ></MoviesCardList>
     </main>
   );

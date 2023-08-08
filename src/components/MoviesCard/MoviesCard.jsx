@@ -4,7 +4,7 @@ import "./MoviesCard.css";
 import { BEATFILM_URL } from "../../utils/constants";
 import calculateHours from "../../utils/handlers";
 
-function MoviesCard({ movie, savedMovies, deleteMovie, saveMovie }) {
+function MoviesCard({ movie, savedMovies, saveMovie, deleteMovie }) {
   const location = useLocation();
   const imageUrlValue = movie.image.url;
   const imageUrl = imageUrlValue ? BEATFILM_URL + imageUrlValue : movie.image;

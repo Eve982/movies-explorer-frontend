@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import Main from "../Main/Main";
 import "./App.css";
@@ -20,8 +20,8 @@ import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
 function App() {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const [currentPath, setCurrentPath] = useState("");
+
+  const [isRequestInProgress, setRequestInProgress] = useState(true);
 
   const [isLoading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState({
@@ -107,8 +107,7 @@ function App() {
   }
 
   function checkToken() {
-    // const isLoggedIn = currentUser.isLoggedIn;
-    // setCurrentPath(location.pathname);
+    setLoading(false);
     mainApi
       .getUserInfo()
       .then((userData) => {
@@ -116,31 +115,134 @@ function App() {
           ...userData,
           isLoggedIn: true,
         });
-        navigate("/movies");
-        // navigate(`${currentPath ? currentPath : "/movies"}`);
+        setLoading(false);
       })
       .catch((err) => {
         handleLogout();
         console.log(err);
+      })
+      .finally(() => {
+        setRequestInProgress(false);
       });
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("movies");
+    localStorage.removeItem("moviesSearchKey");
+    localStorage.removeItem("savedMoviesSearchKey");
+    localStorage.removeItem("filteredMovies");
+    localStorage.removeItem("shortMovies");
+    localStorage.removeItem("moviesCheckBox");
+    localStorage.removeItem("savedMoviesCheckBox");
+    setCurrentUser({
+      _id: "",
+      name: "",
+      email: "",
+      isLoggedIn: false,
+    });
+    setSavedMovies([]);
+    setFilteredMovies([]);
+    setCheckBoxMoviesActive(false);
+    setCheckBoxSavedMoviesActive(false);
+    setShortMovies([]);
+    setShortMoviesSaved([]);
+    setSavedFilteredMovies(false);
+    authApi.logout();
+    navigate("/", { replace: true });
+  }
+
+  function handleFindClickMovies(e, parent) {
+    e.preventDefault();
+    const moviesArray = JSON.parse(localStorage.getItem("movies"));
+    const inputValue = e.target.searchFormInput.value;
+
+    const filteredMovies = filters.filterByKeyWord(inputValue, moviesArray);
+    localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
+    // Записываю поисковый ключ в хранилище.
+    localStorage.setItem(`${parent}SearchKey`, inputValue);
+    setFilteredMovies(filteredMovies);
+
+    if (isCheckBoxMoviesActive) {
+      const shortMovies = filters.findShorts(filteredMovies);
+      setShortMovies(shortMovies);
+      localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
+    }
+  }
+
+  function handleFindClickSaved(e) {
+    e.preventDefault();
+    const inputValue = e.target.searchFormInput.value;
+    const filteredSavedMovies = filters.filterByKeyWord(
+      inputValue,
+      savedMovies,
+    );
+    setSavedFilteredMovies(filteredSavedMovies);
+
+    if (isCheckBoxMoviesActive) {
+      const shortMoviesSaved = filters.findShorts(filteredSavedMovies);
+      setShortMoviesSaved(shortMoviesSaved);
+    }
+  }
+
+  function saveMovie(movie) {
+    mainApi
+      .saveMovie(movie)
+      .then(() => {
+        mainApi.getSavedMovies().then((res) => {
+          setSavedMovies(res);
+          setSavedFilteredMovies(res);
+        });
+      })
+      .catch((err) => {
+        showErrorPopup(err, false);
+      });
+  }
+
+  function deleteMovie(movie) {
+    mainApi.deleteMovie(movie.movieId).then(() => {
+      setSavedMovies((state) => state.filter((m) => m._id !== movie._id));
+    });
+  }
+
+  // function handleCheckBoxMoviesActive() {
+  //   const shortMovies = filters.findShorts(filteredMovies);
+  //   setShortMovies(shortMovies);
+  //   localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
+  // }
+
+  // function handleCheckBoxSavedMoviesActive() {
+  //   const shortMoviesSaved = filters.findShorts(savedFilteredMovies);
+  //   setShortMoviesSaved(shortMoviesSaved);
+  // }
+
+  function handleCheckBoxActive(parent, checkBox) {
+    parent === "movies"
+      ? setCheckBoxMoviesActive(!checkBox)
+      : setCheckBoxSavedMoviesActive(!checkBox);
+    localStorage.setItem(`${parent}CheckBox`, !checkBox);
   }
 
   useEffect(() => {
     checkToken();
 
+    const moviesCheckBox = localStorage.getItem("moviesCheckBox");
+    const savedMoviesCheckBox = localStorage.getItem("savedMoviesCheckBox");
+
+    if (moviesCheckBox) {
+      setCheckBoxMoviesActive(Boolean(JSON.parse(moviesCheckBox)));
+    }
+    if (savedMoviesCheckBox) {
+      setCheckBoxSavedMoviesActive(Boolean(JSON.parse(savedMoviesCheckBox)));
+    }
+
     const filteredMovies = localStorage.getItem("filteredMovies");
-    const shortMovies = localStorage.getItem("shortMovies");
-    const isCheckBoxMoviesActive = localStorage.getItem(
-      "isCheckBoxMoviesActive",
-    );
+    const filteredSavedMovies = localStorage.getItem("filteredSavedMovies");
+
     if (filteredMovies) {
       setFilteredMovies(JSON.parse(filteredMovies));
     }
-    if (shortMovies) {
-      setShortMovies(JSON.parse(shortMovies));
-    }
-    if (isCheckBoxMoviesActive) {
-      setCheckBoxMoviesActive(JSON.parse(isCheckBoxMoviesActive));
+    if (filteredSavedMovies) {
+      setShortMovies(JSON.parse(filteredSavedMovies));
     }
   }, []);
 
@@ -188,187 +290,91 @@ function App() {
   //     .catch((err) => console.log(err));
   // }
 
-  function handleLogout() {
-    localStorage.removeItem("movies");
-    localStorage.removeItem("searchKey");
-    localStorage.removeItem("filteredMovies");
-    // localStorage.removeItem("jwt");
-    localStorage.removeItem("shortMovies");
-    localStorage.removeItem("isCheckBoxMoviesActive");
-    localStorage.removeItem("isCheckBoxSavedMoviesActive");
-    setCurrentUser({
-      _id: "",
-      name: "",
-      email: "",
-      isLoggedIn: false,
-    });
-    setSavedMovies([]);
-    setFilteredMovies([]);
-    setCheckBoxMoviesActive(false);
-    setCheckBoxSavedMoviesActive(false);
-    setShortMovies([]);
-    setShortMoviesSaved([]);
-    setSavedFilteredMovies(false);
-    authApi.logout();
-    navigate("/", { replace: true });
-  }
-  // const token = localStorage.getItem("jwt");
-  // console.log('APP localStorage.getItem("token"): ', token);
-
-  function handleFindClickMovies(e) {
-    e.preventDefault();
-    const moviesArray = JSON.parse(localStorage.getItem("movies"));
-    const inputValue = e.target.searchFormInput.value;
-    const filteredMovies = filters.filterByKeyWord(inputValue, moviesArray);
-    localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
-    localStorage.setItem("searchKey", inputValue);
-    setFilteredMovies(filteredMovies);
-
-    if (isCheckBoxMoviesActive) {
-      const shortMovies = filters.findShorts(filteredMovies);
-      setShortMovies(shortMovies);
-      localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
-    }
-  }
-
-  function handleFindClickSaved(e) {
-    e.preventDefault();
-    const inputValue = e.target.searchFormInput.value;
-    const filteredSavedMovies = filters.filterByKeyWord(
-      inputValue,
-      savedMovies,
-    );
-    setSavedFilteredMovies(filteredSavedMovies);
-
-    if (isCheckBoxMoviesActive) {
-      const shortMoviesSaved = filters.findShorts(filteredSavedMovies);
-      setShortMoviesSaved(shortMoviesSaved);
-    }
-  }
-
-  function saveMovie(movie) {
-    mainApi
-      .saveMovie(movie)
-      .then(() => {
-        mainApi.getSavedMovies().then((res) => {
-          setSavedMovies(res);
-          setSavedFilteredMovies(res);
-        });
-      })
-      .catch((err) => {
-        showErrorPopup(err, false);
-      });
-  }
-
-  function deleteMovie(movie) {
-    mainApi.deleteMovie(movie.movieId).then(() => {
-      setSavedMovies((state) => state.filter((m) => m._id !== movie._id));
-    });
-  }
-
-  function handleCheckBoxMoviesActive() {
-    setCheckBoxMoviesActive(!isCheckBoxMoviesActive);
-    localStorage.setItem("isCheckBoxMoviesActive", isCheckBoxMoviesActive);
-    const shortMovies = filters.findShorts(filteredMovies);
-    setShortMovies(shortMovies);
-    localStorage.setItem("shortMovies", JSON.stringify(shortMovies));
-  }
-
-  function handleCheckBoxSavedMoviesActive() {
-    setCheckBoxSavedMoviesActive(!isCheckBoxSavedMoviesActive);
-    // const shortMoviesSaved = filters.findShorts(savedFilteredMovies);
-    // setShortMoviesSaved(shortMoviesSaved);
-  }
-
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App">
         {isLoading && <Preloader />}
         <Routes>
           <Route path={"/"} element={<Main />} />
-          {currentUser.isLoggedIn ? (
-            <>
-              <Route element={<Layout />}>
-                <Route
-                  path="/movies"
-                  element={
-                    <ProtectedRoute
-                      element={Movies}
-                      onFindClick={handleFindClickMovies}
-                      filteredMovies={filteredMovies}
-                      savedMovies={savedMovies}
-                      saveMovie={saveMovie}
-                      deleteMovie={deleteMovie}
-                      shortMovies={shortMovies}
-                      isCheckBoxActive={isCheckBoxMoviesActive}
-                      handleCheckBoxActive={handleCheckBoxMoviesActive}
-                    />
-                  }
+          <Route element={<Layout />}>
+            <Route
+              path="/movies"
+              element={
+                <ProtectedRoute
+                  isRequestInProgress={isRequestInProgress}
+                  element={Movies}
+                  onFindClick={handleFindClickMovies}
+                  filteredMovies={filteredMovies}
+                  savedMovies={savedMovies}
+                  saveMovie={saveMovie}
+                  deleteMovie={deleteMovie}
+                  shortMovies={shortMovies}
+                  isCheckBoxActive={isCheckBoxMoviesActive}
+                  handleCheckBoxActive={handleCheckBoxActive}
                 />
+              }
+            />
 
-                <Route
-                  path="/saved-movies"
-                  element={
-                    <ProtectedRoute
-                      element={SavedMovies}
-                      onFindClick={handleFindClickSaved}
-                      savedFilteredMovies={savedFilteredMovies}
-                      savedMovies={savedMovies}
-                      saveMovie={saveMovie}
-                      deleteMovie={deleteMovie}
-                      shortMovies={shortMoviesSaved}
-                      isCheckBoxActive={isCheckBoxSavedMoviesActive}
-                      handleCheckBoxActive={handleCheckBoxSavedMoviesActive}
-                    />
-                  }
+            <Route
+              path="/saved-movies"
+              element={
+                <ProtectedRoute
+                  isRequestInProgress={isRequestInProgress}
+                  element={SavedMovies}
+                  onFindClick={handleFindClickSaved}
+                  savedFilteredMovies={savedFilteredMovies}
+                  savedMovies={savedMovies}
+                  saveMovie={saveMovie}
+                  deleteMovie={deleteMovie}
+                  shortMovies={shortMoviesSaved}
+                  isCheckBoxActive={isCheckBoxSavedMoviesActive}
+                  handleCheckBoxActive={handleCheckBoxActive}
                 />
-              </Route>
+              }
+            />
+          </Route>
 
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute
-                    element={ProfileLayout}
-                    handleUpdateProfile={handleUpdateProfile}
-                    logout={handleLogout}
-                  />
-                }
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                isRequestInProgress={isRequestInProgress}
+                element={ProfileLayout}
+                handleUpdateProfile={handleUpdateProfile}
+                logout={handleLogout}
               />
-            </>
-          ) : (
-            <>
-              <Route
-                path="/signin"
-                element={
-                  !currentUser.isLoggedIn ? (
-                    <Login handleLogin={handleLogin} isLoading={isLoading} />
-                  ) : (
-                    navigate("/movies")
-                  )
-                }
-              />
-              <Route
-                path="/signup"
-                element={
-                  !currentUser.isLoggedIn ? (
-                    <Register
-                      handleRegister={handleRegister}
-                      isLoading={isLoading}
-                    />
-                  ) : (
-                    navigate("/movies")
-                  )
-                }
-              />
-              <Route
-                path="/signout"
-                element={() => {
-                  handleLogout();
-                  return <></>;
-                }}
-              />
-            </>
-          )}
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              !currentUser.isLoggedIn ? (
+                <Login handleLogin={handleLogin} isLoading={isLoading} />
+              ) : (
+                <Navigate replace to="/movies" />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              !currentUser.isLoggedIn ? (
+                <Register
+                  handleRegister={handleRegister}
+                  isLoading={isLoading}
+                />
+              ) : (
+                <Navigate replace to="/movies" />
+              )
+            }
+          />
+          <Route
+            path="/signout"
+            element={() => {
+              handleLogout();
+              return <></>;
+            }}
+          />
           {<Route path="/*" element={<NotFoundPage />} />}
         </Routes>
         <InfoToolTip

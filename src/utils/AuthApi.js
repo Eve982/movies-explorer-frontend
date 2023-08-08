@@ -34,9 +34,7 @@ class AuthApi {
       .then(this._getServerResponse)
       .then((data) => {
         if (data.token) {
-          // console.log('data.token: ', data.token);
           // localStorage.setItem("jwt", data.token);
-          // console.log('API localStorage.getItem("jwt",: ', localStorage.getItem("jwt"));
           return data;
         }
       });

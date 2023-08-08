@@ -1,8 +1,6 @@
-// import React, { useEffect } from "react";
 import "./FilterCheckbox.css";
 
-function FilterCheckbox({ handleCheckBoxActive, isCheckBoxActive }) {
-
+function FilterCheckbox({ isCheckBoxActive, parent, handleCheckBoxActive }) {
   return (
     <div className="filter-checkbox">
       <input
@@ -10,7 +8,7 @@ function FilterCheckbox({ handleCheckBoxActive, isCheckBoxActive }) {
         type="checkbox"
         id="checkbox"
         checked={isCheckBoxActive}
-        onChange={handleCheckBoxActive}
+        onChange={() => handleCheckBoxActive(parent, isCheckBoxActive)}
       />
       <label htmlFor="checkbox" className="filter-checkbox__label">
         Короткометражки

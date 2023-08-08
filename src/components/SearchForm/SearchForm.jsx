@@ -1,20 +1,44 @@
+import { useEffect, useState } from "react";
 import "./SearchForm.css";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
-import { useEffect, useState } from "react";
 
 function SearchForm({
+  parent,
   onFindClick,
-  handleInputChange,
-  searchKey,
+  // searchKey,
+  // handleInputChange,
   isCheckBoxActive,
   handleCheckBoxActive,
 }) {
-  const [searchError, setSearchError] = useState(null);
-  const [searchFormInput, setSearchFormInput] = useState(null);
+  // Достает при монтировании страницы поисковый ключ из локального
+  // хранилища в зависимости от родителя и устанавливает его в стейт.
+  const [searchKey, setSearchKey] = useState("");
+  useEffect(() => {
+    const currentSearchKey = localStorage.getItem(
+      parent === "movies" ? "moviesSearchKey" : "savedMoviesSearchKey",
+    );
+    if (currentSearchKey) {
+      setSearchKey(currentSearchKey);
+    }
+  }, []);
+
+  function handleInputChange(e) {
+    const value = e.target.value;
+    e.preventDefault();
+    setSearchKey(value);
+  }
+
+  const [searchError, setSearchError] = useState(
+    document.querySelector(".search-form__error"),
+  );
+  const [searchFormInput, setSearchFormInput] = useState(
+    document.querySelector(".search-form__input"),
+  );
+  // console.log("searchFormInput: ", searchFormInput);
 
   function showError() {
     const searchFormInput = document.querySelector(".search-form__input");
-    const showSearchError = document.querySelector(".searchForm__error");
+    const showSearchError = document.querySelector(".search-form__error");
 
     if (searchFormInput.validity.valueMissing) {
       showSearchError.textContent = "Нужно ввести ключевое слово.";
@@ -22,23 +46,23 @@ function SearchForm({
       showSearchError.textContent =
         "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.";
     }
-    showSearchError.className = "searchForm__error searchForm__error_active";
+    showSearchError.className = "search-form__error search-form__error_active";
   }
 
   function handleSubmit(e) {
     if (!searchFormInput.validity.valid) {
-      e.preventDefault();
+      // e.preventDefault();
       showError();
     }
-    onFindClick(e);
+    onFindClick(e, parent);
   }
 
   useEffect(() => {
     const searchFormInput = document.querySelector(".search-form__input");
-    const showSearchError = document.querySelector(".searchForm__error");
+    const showSearchError = document.querySelector(".search-form__error");
     setSearchFormInput(searchFormInput);
     setSearchError(searchError);
-    showSearchError.className = "searchForm__error";
+    showSearchError.className = "search-form__error";
     showSearchError.textContent = "";
   }, []);
 
@@ -59,13 +83,14 @@ function SearchForm({
         />
         <button className="search-form__button"></button>
       </form>
-      <span className="searchForm__error"></span>
+      <span className="search-form__error"></span>
       <FilterCheckbox
         isCheckBoxActive={isCheckBoxActive}
+        parent={parent}
         handleCheckBoxActive={handleCheckBoxActive}
       ></FilterCheckbox>
     </div>
   );
-};
+}
 
 export default SearchForm;

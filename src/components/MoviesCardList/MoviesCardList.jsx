@@ -10,11 +10,11 @@ import {
 
 function MoviesCardList({
   filteredMovies,
-  defineLikedMovies,
   savedMovies,
-  deleteMovie,
   saveMovie,
-  isCheckBoxMoviesActive,
+  deleteMovie,
+  isCheckBoxActive,
+  // defineLikedMovies,
 }) {
   const location = useLocation();
 
@@ -62,10 +62,10 @@ function MoviesCardList({
             <MoviesCard
               key={movie.id || movie._id || movie.movieId}
               movie={movie}
-              defineLikedMovies={defineLikedMovies}
+              // defineLikedMovies={defineLikedMovies}
               savedMovies={savedMovies}
-              deleteMovie={deleteMovie}
               saveMovie={saveMovie}
+              deleteMovie={deleteMovie}
             />
           ))}
         </ul>
@@ -80,13 +80,25 @@ function MoviesCardList({
 
   function renderMovies() {
     if (location.pathname === "/saved-movies") {
-      return renderContent(isCheckBoxMoviesActive ? savedMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : savedMovies);
+      return renderContent(
+        isCheckBoxActive
+          ? savedMovies.filter(
+              (movie) => movie.duration <= SHORT_FILM_MAX_DURATION,
+            )
+          : savedMovies,
+      );
     } else {
       return localStorage.getItem("filteredMovies") ? (
         filteredMovies.length === 0 ? (
           renderEmptySearch()
         ) : (
-          renderContent(isCheckBoxMoviesActive ? filteredMovies.filter((movie) => movie.duration <= SHORT_FILM_MAX_DURATION) : filteredMovies)
+          renderContent(
+            isCheckBoxActive
+              ? filteredMovies.filter(
+                  (movie) => movie.duration <= SHORT_FILM_MAX_DURATION,
+                )
+              : filteredMovies,
+          )
         )
       ) : (
         <></>
