@@ -4,36 +4,43 @@ import "./MoviesCard.css";
 import { BEATFILM_URL } from "../../utils/constants";
 import calculateHours from "../../utils/handlers";
 
-function MoviesCard({ movie, savedMovies, saveMovie, deleteMovie }) {
+function MoviesCard({
+  movie,
+  savedMovies,
+  saveMovie,
+  deleteMovie,
+}) {
   const location = useLocation();
-  const imageUrlValue = movie.image.url;
-  const imageUrl = imageUrlValue ? BEATFILM_URL + imageUrlValue : movie.image;
-  const [isSaved, setIsSaved] = useState(false);
-  const [foundMovie, setFoundMovie] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
+
+  function getClassName() {
+    return location.pathname === "/saved-movies"
+      ? "movies-card__remove"
+      : isLiked
+      ? "movies-card__like movies-card__like_active"
+      : "movies-card__like";
+  }
 
   useEffect(() => {
-    const found = savedMovies.find(
-      (savedMovie) => savedMovie.movieId === movie.id,
-    );
-    setFoundMovie(found);
-    setIsSaved(found);
-  }, [movie.id, savedMovies]);
-
-  function handleLike(e) {
-    e.preventDefault();
-    if (!isSaved) {
-      saveMovie(movie);
-    } else {
-      if (foundMovie && foundMovie._id) {
-        deleteMovie(foundMovie);
-      }
+    if (location.pathname === "/movies") {
+      const isMovieSaved = savedMovies.some((m) => m.movieId === movie.id);
+      setIsLiked(isMovieSaved);
     }
-  }
+  }, []);
 
-  function handleRemove(e) {
-    e.preventDefault();
-    deleteMovie(movie);
-  }
+  const handleOnClick = () => {
+    if (location.pathname === "/movies") {
+      if (isLiked) {
+        deleteMovie(movie.id);
+        setIsLiked(false);
+      } else {
+        saveMovie(movie);
+        setIsLiked(true);
+      }
+    } else {
+      deleteMovie(movie.movieId);
+    }
+  };
 
   return (
     <li className="movies-card">
@@ -44,21 +51,11 @@ function MoviesCard({ movie, savedMovies, saveMovie, deleteMovie }) {
             {calculateHours(movie.duration)}
           </span>
         </div>
-        {location.pathname === "/saved-movies" ? (
-          <button
-            className="movies-card__remove"
-            type="button"
-            onClick={handleRemove}
-          />
-        ) : (
-          <button
-            className={`movies-card__like ${
-              isSaved ? "movies-card__like_active" : ""
-            }`}
-            type="button"
-            onClick={isSaved ? handleRemove : handleLike}
-          />
-        )}
+        <button
+          className={getClassName()}
+          type="button"
+          onClick={handleOnClick}
+        />
       </div>
       <a
         className="movie__trailer-link"
@@ -68,7 +65,7 @@ function MoviesCard({ movie, savedMovies, saveMovie, deleteMovie }) {
       >
         <img
           className="movies-card__image"
-          src={imageUrl}
+          src={movie.image.url ? BEATFILM_URL + movie.image.url : movie.image}
           alt={movie.nameRU}
         ></img>
       </a>

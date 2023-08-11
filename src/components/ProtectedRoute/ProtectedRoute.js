@@ -5,7 +5,7 @@ import Preloader from "../Preloader/Preloader";
 
 function ProtectedRoute({ element: Component, ...props }) {
   const currentUser = useContext(CurrentUserContext);
-  return props.isRequestInProgress ? (
+  return props.isCheckingToken ? (
     <Preloader />
   ) : currentUser.isLoggedIn ? (
     <Component {...props} />

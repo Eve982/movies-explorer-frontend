@@ -7,10 +7,10 @@ function getResponseData(response) {
   return Promise.reject(`Ошибка: ${response.status}`);
 }
 
-function getInitialMovies() {
+function getAllMovies() {
   return fetch(`${BEATFILM_URL}/beatfilm-movies`).then((res) => {
     return getResponseData(res);
   });
 }
 
-export { getInitialMovies };
+export { getAllMovies };

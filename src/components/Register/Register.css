@@ -69,6 +69,7 @@
 }
 
 .form__input {
+  /* outline: auto; */
   border: none;
   font-size: 13px;
   font-weight: 400;
@@ -88,7 +89,7 @@
   margin: 0;
   padding: 0;
   color: #ee3465;
-  position: absolute;
+  /* position: absolute; */
   padding-bottom: 5px;
 }
 
@@ -170,7 +171,7 @@
 }
 
 .form__submit-button_disabled {
-  /* pointer-events: none; */
+  pointer-events: none;
   user-select: none;
   background: #f8f8f8;
   color: #c2c2c2;

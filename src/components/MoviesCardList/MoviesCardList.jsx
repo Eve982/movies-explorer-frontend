@@ -1,111 +1,69 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
+import { findShorts } from "../../utils/filters";
 import {
   RENDERED_BASIC_CARDS,
   RENDERED_MORE_CARD,
-  SHORT_FILM_MAX_DURATION,
 } from "../../utils/constants";
 
 function MoviesCardList({
-  filteredMovies,
   savedMovies,
+  movies,
   saveMovie,
   deleteMovie,
   isCheckBoxActive,
-  // defineLikedMovies,
 }) {
-  const location = useLocation();
-
-  function defineNumberOfStartCards() {
-    RENDERED_BASIC_CARDS();
-  }
-
-  function defineNumberOfMoreItems() {
-    RENDERED_MORE_CARD();
-  }
-
-  const [numberOfCardsShow, setNumberOfCardsShown] = useState(
-    defineNumberOfStartCards(),
-  );
-  const [numberOfMoreCards, setNumberOfMoreItems] = useState(
-    defineNumberOfMoreItems(),
-  );
+  const moviesToRender = isCheckBoxActive ? findShorts(movies) : movies;
+  const [moviesCount, setMoviesCount] = useState(RENDERED_BASIC_CARDS);
+  console.log('moviesCount: ', moviesCount);
+  const [moreMovies, setMoreMovies] = useState(RENDERED_MORE_CARD);
 
   const showMore = () => {
-    if (numberOfCardsShow + numberOfMoreCards <= filteredMovies.length) {
-      setNumberOfCardsShown(numberOfCardsShow + numberOfMoreCards);
+    if (moviesCount + moreMovies <= moviesToRender.length) {
+      setMoviesCount(moviesCount + moreMovies);
     } else {
-      setNumberOfCardsShown(filteredMovies.length);
+      setMoviesCount(moviesToRender.length);
     }
   };
 
   const updateMoreItems = () => {
-    setNumberOfMoreItems(defineNumberOfMoreItems);
+    setMoreMovies(RENDERED_MORE_CARD());
   };
 
   useEffect(() => {
+    updateMoreItems();
     window.addEventListener("resize", updateMoreItems);
     return () => window.removeEventListener("resize", updateMoreItems);
-  });
+  }, [window.innerWidth]);
 
-  function renderEmptySearch() {
-    return <p className="movies-card-list__empty">Ничего не найдено</p>;
-  }
-
-  function renderContent(movies) {
-    return (
-      <>
+  return (
+    <>
+      {/* isLoading && <Preloader /> */}
+      {moviesToRender.length === 0 ? (
+        <p className="movies-card-list__empty">
+          Ничего не найдено :( <br /> не представляете как мы грустим &#x1F494;
+        </p>
+      ) : (
         <ul className="movies-card-list">
-          {movies.slice(0, numberOfCardsShow).map((movie) => (
+          {moviesToRender.slice(0, moviesCount).map((movie) => (
             <MoviesCard
-              key={movie.id || movie._id || movie.movieId}
+              key={movie.id || movie.movieId}
               movie={movie}
-              // defineLikedMovies={defineLikedMovies}
               savedMovies={savedMovies}
               saveMovie={saveMovie}
               deleteMovie={deleteMovie}
             />
           ))}
         </ul>
-        {numberOfCardsShow < movies.length && (
-          <button className="movies-card-list__button-more" onClick={showMore}>
-            Еще
-          </button>
-        )}
-      </>
-    );
-  }
-
-  function renderMovies() {
-    if (location.pathname === "/saved-movies") {
-      return renderContent(
-        isCheckBoxActive
-          ? savedMovies.filter(
-              (movie) => movie.duration <= SHORT_FILM_MAX_DURATION,
-            )
-          : savedMovies,
-      );
-    } else {
-      return localStorage.getItem("filteredMovies") ? (
-        filteredMovies.length === 0 ? (
-          renderEmptySearch()
-        ) : (
-          renderContent(
-            isCheckBoxActive
-              ? filteredMovies.filter(
-                  (movie) => movie.duration <= SHORT_FILM_MAX_DURATION,
-                )
-              : filteredMovies,
-          )
-        )
-      ) : (
-        <></>
-      );
-    }
-  }
-  return renderMovies();
+      )}
+      {moviesCount < moviesToRender.length && (
+        <button className="movies-card-list__button-more" onClick={showMore}>
+          Еще
+        </button>
+      )}
+    </>
+  );
 }
 
 export default MoviesCardList;

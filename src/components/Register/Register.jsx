@@ -1,37 +1,44 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { REGEX_EMAIL } from "../../utils/constants";
 import "./Register.css";
 import formLink from "../../images/formLink.svg";
-
+// import Input from "../Input/Input";
+// Не могу понять как реализовать отображение ошибок живой
+// валидации react-hook-form при передаче errros в компонент <Input>.
+// Также пока непонятно, нужно ли прописывать value тега input при
+// использовании react-hook-form...
 function Register({ handleRegister, isLoading }) {
-  const [userRegistrationData, setUserRegistrationData] = useState({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
+  const [userData, setUserData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [isValid, setIsValid] = useState(false);
-
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserRegistrationData({
-      ...userRegistrationData,
+    setUserData({
+      ...userData,
       [name]: value,
     });
+  };
 
-    setErrors({ ...errors, [name]: e.target.validationMessage });
-    setIsValid(e.target.closest("form").checkValidity());
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    handleRegister(userRegistrationData);
-  }
+  const handlerSubmit = () => {
+    handleRegister(userData);
+  };
 
   return (
     <main>
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="form" onSubmit={handleSubmit(handlerSubmit)}>
         <div className="form__info">
           <Link className="form__link" to="/">
             <img className="form__image" src={formLink} alt="логотип" />
@@ -41,55 +48,90 @@ function Register({ handleRegister, isLoading }) {
             Имя
             <input
               className="form__input"
-              type="name"
-              name="name"
-              id="name"
+              type="text"
               placeholder="Имя"
-              required
-              value={userRegistrationData.name}
-              onChange={handleChange}
+              disabled={isLoading}
+              {...register("name", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле обязательно к заполнению.",
+                minLength: {
+                  value: 2,
+                  message: "Имя должно содержать минимум 2 символа.",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Имя должно содержать максимум 30 символов.",
+                },
+              })}
+              // value={userData.name}
             />
           </label>
-          <span className="form__error">{errors.name}</span>
+          {errors?.name && (
+            <span className="form__error">{errors.name.message}</span>
+          )}
           <label className="form__input-lable">
             Email
             <input
               className="form__input"
               type="email"
-              name="email"
               placeholder="Email"
-              required
-              value={userRegistrationData.email}
-              onChange={handleChange}
-              autoComplete="current-password"
+              disabled={isLoading}
+              autoComplete="email"
+              {...register("email", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле email обязательно к заполнению.",
+                pattern: {
+                  value: REGEX_EMAIL,
+                  message: "Email должен иметь формат xxx@xxx.xx.",
+                },
+              })}
+              // value={userData.email}
             />
           </label>
-          <span className="form__error">{errors.email}</span>
+          {errors?.email && (
+            <span className="form__error">{errors.email.message}</span>
+          )}
           <label className="form__input-lable">
             Пароль
             <input
               className="form__input"
               type="password"
-              name="password"
               placeholder="Password"
-              required
-              minLength="2"
-              maxLength="30"
-              value={userRegistrationData.password}
-              onChange={handleChange}
+              disabled={isLoading}
               autoComplete="current-password"
+              {...register("password", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле обязательно к заполнению!",
+                minLength: {
+                  value: 3,
+                  message: "Пароль должен содержать минимум 3 символа.",
+                },
+                maxLength: {
+                  value: 8,
+                  message: "Пароль должен содержать максимум 8 символов.",
+                },
+              })}
+              // value={userData.password}
             />
           </label>
-          <span className="form__error">{errors.password}</span>
+          {errors?.password && (
+            <span className="form__error">{errors.password.message}</span>
+          )}
         </div>
         <div className="form__buttons-section">
           <button
             className={`form__submit-button
-              ${isValid ? "" : "form__submit-button_disabled"}`}
+              ${!isValid || isLoading ? "form__submit-button_disabled" : ""}`}
             type="submit"
-            disabled={isLoading ? "disabled" : ""}
+            disabled={!isValid}
           >
-            Зарегистрироваться
+            {isLoading ? "Двери открываются..." : "Зарегистрироваться"}
           </button>
           <p className="form__question">
             Уже зарегистрированы?

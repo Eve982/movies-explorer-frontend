@@ -3,14 +3,13 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 function Movies({
-  onFindClick,
-  filteredMovies,
   savedMovies,
+  movies,
   saveMovie,
   deleteMovie,
-  shortMovies,
   isCheckBoxActive,
   handleCheckBoxActive,
+  onFindClick,
 }) {
   return (
     <main className="movies">
@@ -21,10 +20,11 @@ function Movies({
         handleCheckBoxActive={handleCheckBoxActive}
       ></SearchForm>
       <MoviesCardList
-        filteredMovies={isCheckBoxActive ? shortMovies : filteredMovies}
         savedMovies={savedMovies}
+        movies={movies}
         saveMovie={saveMovie}
         deleteMovie={deleteMovie}
+        isCheckBoxActive={isCheckBoxActive}
       ></MoviesCardList>
     </main>
   );

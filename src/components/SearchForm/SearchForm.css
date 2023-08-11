@@ -78,12 +78,15 @@
 }
 
 .search-form__error {
-
-}
-
-.search-form__error_active {
   font-weight: 400px;
   font-size: 13px;
   line-height: 18px;
   color: white;
 }
+
+/* .search-form__error_active {
+  font-weight: 400px;
+  font-size: 13px;
+  line-height: 18px;
+  color: white;
+} */

@@ -1,33 +1,49 @@
-import { useState } from "react";
+import { ErrorMessage } from "@hookform/error-message"
+import { REGEX_EMAIL } from "../../utils/constants";
 
 function Input({
   label,
   type,
-  autoComplete,
-
-  textError,
-  validator,
-  onError,
-  ...props
+  register,
+  inputsData,
+  inputsDataHandler,
+  errors,
 }) {
-  const [value, setValue] = useState("");
-  const [userLoginData, setUserLoginData] = useState({
-    email: "",
-    password: "",
-  });
-  const [validateError, setValidateError] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isValid, setIsValid] = useState(false);
-
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserLoginData({
-      ...userLoginData,
+    inputsDataHandler({
+      ...inputsData,
       [name]: value,
     });
-    setErrors({ ...errors, [name]: e.target.validationMessage });
-    setIsValid(e.target.closest("form").checkValidity());
-  }
+  };
+
+  const emailRules = {
+    pattern: {
+      value: REGEX_EMAIL,
+      message: "Email должен иметь формат xxx@xxx.xx.",
+    },
+  };
+  const passwordRules = {
+    minLength: {
+      value: 3,
+      message: "Пароль должен содержать минимум 3 символа.",
+    },
+    maxLength: {
+      value: 8,
+      message: "Пароль должен содержать максимум 8 символов.",
+    },
+  };
+  const nameRules = {};
+
+  const setRules = () => {
+    if (type === "email") {
+      return emailRules;
+    }
+    if (type === "password") {
+      return passwordRules;
+    }
+    return nameRules;
+  };
 
   return (
     <>
@@ -36,25 +52,21 @@ function Input({
         <input
           className="form__input"
           type={type}
-          name={type}
           placeholder={label}
-          value={userLoginData.type}
-          onChange={handleChange}
-          onBlur={(e) => {
-            if (validator) {
-              setValidateError(!validator(e.target.value));
-            }
-            if (onError) {
-              onError({ [label]: validator(e.target.value) });
-            }
-          }}
-          autoComplete={autoComplete}
-          required
-          {...props}
+          autoComplete="on"
+          {...register(type, {
+            onChange: (e) => {
+              handleChange(e);
+            },
+            required: "Поле обязательно к заполнению.",
+            setRules,
+          })}
         />
-        {validateError ? <span>{textError}</span> : null}
       </label>
-      <span className="form__error">{errors}</span>
+      <ErrorMessage className="form__error" errors={errors} name="name" as="span" />
+      {/* {errors?.[type] && (
+        <span className="form__error">{errors[type].message}</span>
+      )} */}
     </>
   );
 }

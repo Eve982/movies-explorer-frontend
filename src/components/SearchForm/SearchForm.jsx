@@ -5,15 +5,13 @@ import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 function SearchForm({
   parent,
   onFindClick,
-  // searchKey,
-  // handleInputChange,
   isCheckBoxActive,
   handleCheckBoxActive,
 }) {
-  // Достает при монтировании страницы поисковый ключ из локального
-  // хранилища в зависимости от родителя и устанавливает его в стейт.
   const [searchKey, setSearchKey] = useState("");
+  const [searchError, setSearchError] = useState("");
   useEffect(() => {
+    // При рефреше страницы обновляем стейты из локального хранилища.
     const currentSearchKey = localStorage.getItem(
       parent === "movies" ? "moviesSearchKey" : "savedMoviesSearchKey",
     );
@@ -22,48 +20,38 @@ function SearchForm({
     }
   }, []);
 
-  function handleInputChange(e) {
-    const value = e.target.value;
-    e.preventDefault();
-    setSearchKey(value);
-  }
-
-  const [searchError, setSearchError] = useState(
-    document.querySelector(".search-form__error"),
-  );
-  const [searchFormInput, setSearchFormInput] = useState(
-    document.querySelector(".search-form__input"),
-  );
-  // console.log("searchFormInput: ", searchFormInput);
-
-  function showError() {
-    const searchFormInput = document.querySelector(".search-form__input");
-    const showSearchError = document.querySelector(".search-form__error");
-
-    if (searchFormInput.validity.valueMissing) {
-      showSearchError.textContent = "Нужно ввести ключевое слово.";
-    } else {
-      showSearchError.textContent =
-        "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.";
-    }
-    showSearchError.className = "search-form__error search-form__error_active";
-  }
-
   function handleSubmit(e) {
+    e.preventDefault();
+    const inputValue = e.target.searchFormInput.value;
+    const searchFormInput = e.target.searchFormInput;
     if (!searchFormInput.validity.valid) {
-      // e.preventDefault();
-      showError();
+      showError(e);
+    } else {
+      onFindClick(inputValue, parent);
+      if(parent === "movies") {
+        localStorage.setItem("moviesSearchKey", searchKey);
+      }
     }
-    onFindClick(e, parent);
+  }
+
+  function showError(e) {
+    const searchFormInput = e.target.elements.searchFormInput;
+    if (searchFormInput.validity.valueMissing) {
+      setSearchError("Нужно ввести ключевое слово.");
+    } else {
+      setSearchError(
+        "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.",
+      );
+    }
+  }
+
+  function handleInputChange(e) {
+    setSearchKey(e.target.value);
+    setSearchError("");
   }
 
   useEffect(() => {
-    const searchFormInput = document.querySelector(".search-form__input");
-    const showSearchError = document.querySelector(".search-form__error");
-    setSearchFormInput(searchFormInput);
-    setSearchError(searchError);
-    showSearchError.className = "search-form__error";
-    showSearchError.textContent = "";
+    setSearchError("");
   }, []);
 
   return (
@@ -75,15 +63,15 @@ function SearchForm({
       >
         <input
           className="search-form__input"
-          placeholder="Фильм"
+          name="searchFormInput"
+          placeholder="Введите название фильма..."
           value={searchKey}
           onChange={handleInputChange}
           required
-          name="searchFormInput"
         />
         <button className="search-form__button"></button>
       </form>
-      <span className="search-form__error"></span>
+      <span className="search-form__error">{searchError}</span>
       <FilterCheckbox
         isCheckBoxActive={isCheckBoxActive}
         parent={parent}

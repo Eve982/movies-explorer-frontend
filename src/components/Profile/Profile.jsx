@@ -1,18 +1,36 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { REGEX_EMAIL } from "../../utils/constants";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import "./Profile.css";
 
-function Profile({ onSubmit, logout }) {
+function Profile({ handleUpdateProfile, logout, isLoading }) {
   const currentUser = useContext(CurrentUserContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isDirty },
+  } = useForm({
+    defaultValues: {
+      name: currentUser.name,
+      email: currentUser.email,
+    },
+    mode: "onChange",
+  });
+
   const [userData, setUserData] = useState({
     name: "",
     email: "",
   });
-  const [editClicked, setEditClicked] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isValid, setValid] = useState(false);
-  const [isNewInfo, setNewInfo] = useState(false);
+  useEffect(() => {
+    setUserData({ name: currentUser.name, email: currentUser.email });
+  }, [currentUser]);
+
+  console.log('currentUser: ', currentUser);
+  console.log('userData: ', userData);
+
+  const [isClicked, setClicked] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -20,77 +38,79 @@ function Profile({ onSubmit, logout }) {
       ...userData,
       [name]: value,
     });
-    setErrors({ ...errors, [name]: e.target.validationMessage });
-    setValid(e.target.closest("form").checkValidity());
   }
 
-  function handleEdit() {
-    setEditClicked(!editClicked);
+  const handleEdit = () => {
+    setClicked(!isClicked);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setEditClicked(!editClicked);
-    onSubmit(userData);
-  }
-
-  useEffect(() => {
-    if (currentUser.name && currentUser.email) {
-      setUserData({name: currentUser.name, email: currentUser.email});
-    }
-  }, [currentUser.name, currentUser.email]);
-
-  useEffect(() => {
-    setNewInfo(
-      currentUser.name !== userData.name ||
-        currentUser.email !== userData.email,
-    );
-  }, [userData.name, userData.email, currentUser.name, currentUser.email]);
+  const handlerSubmit = () => {
+    handleUpdateProfile(userData);
+    setClicked(!isClicked);
+  };
 
   return (
     <main className="profile">
-      <form className="profile__form" name="profile" onSubmit={handleSubmit}>
+      <form className="profile__form" onSubmit={handleSubmit(handlerSubmit)}>
         <div>
-          <h2 className="profile__title">{`Привет, ${userData.name}!`}</h2>
+          <h2 className="profile__title">{`Привет, ${currentUser.name}!`}</h2>
           <label className="profile__form-label">
             Имя
             <input
               className="profile__input"
               type="text"
-              name="name"
-              id="name"
-              value={userData.name}
-              onChange={handleChange}
-              required
+              disabled={isLoading}
+              {...register("name", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле обязательно к заполнению.",
+                value: currentUser.name,
+                minLength: {
+                  value: 2,
+                  message: "Имя должно содержать минимум 2 символа.",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "Имя должно содержать максимум 30 символов.",
+                },
+              })}
             />
           </label>
-          <span className="profile__error">{errors.name}</span>
+          {errors?.name && (
+            <span className="form__error">{errors.name.message}</span>
+          )}
           <label className="profile__form-label">
             Email
             <input
               className="profile__input"
               type="email"
-              name="email"
-              id="email"
-              value={userData.email}
-              onChange={handleChange}
-              required
+              {...register("email", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле email обязательно к заполнению.",
+                value: currentUser.email,
+                pattern: {
+                  value: REGEX_EMAIL,
+                  message: "Email должен иметь формат xxx@xxx.xx.",
+                },
+              })}
             />
           </label>
-          <span className="profile__error">{errors.email}</span>
+          {errors?.email && (
+            <span className="form__error">{errors.email.message}</span>
+          )}
         </div>
-        {editClicked ? (
-          <div className="profile__submit-section">
+        {isClicked ? (
+          <div className="form__buttons-section">
             <button
-              className={
-                isValid && isNewInfo
-                  ? "profile__submit-button"
-                  : "profile__submit-button profile__submit-button_disabled"
-              }
+              className={`form__submit-button
+                ${!isValid || !isDirty ? "form__submit-button_disabled" : ""}`}
               type="submit"
-              disabled={isValid && isNewInfo ? "" : "disabled"}
+              disabled={!isValid && !isDirty}
             >
-              Сохранить
+              {isLoading ? "Сохранение..." : "Сохранить"}
             </button>
           </div>
         ) : (

@@ -25,6 +25,14 @@
   }
 }
 
+.movies-card-list__empty {
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
+  text-align: center;
+}
+
 .movies-card-list__button-more {
   margin: 50px auto 80px auto;
   width: 320px;
