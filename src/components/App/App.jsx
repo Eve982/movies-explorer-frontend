@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import Main from "../Main/Main";
 import "./App.css";
@@ -20,7 +20,7 @@ import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
 function App() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [isCheckingToken, checkingToken] = useState(true);
 
   const [isLoading, setLoading] = useState(false);
@@ -178,8 +178,6 @@ function App() {
       .deleteMovie(movieId)
       .then((res) => {
         setSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
-        // localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
-        localStorage.setItem("savedMovies", JSON.stringify(savedMovies.filter((m) => m.movieId !== movieId)));
       })
       .then((res) => localStorage.setItem("savedMovies", JSON.stringify(savedMovies)))
       .catch((err) => showErrorPopup(err, false))
@@ -233,6 +231,12 @@ function App() {
         .finally(() => setLoading(false));
     }
   }, [currentUser.isLoggedIn]);
+
+  useEffect(() => {
+    if (location.pathname === "/saved-movies") {
+      setFilteredSavedMovies(savedMovies);
+    }
+  }, [location.pathname]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

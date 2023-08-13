@@ -16,7 +16,6 @@ function MoviesCardList({
 }) {
   const moviesToRender = isCheckBoxActive ? findShorts(movies) : movies;
   const [moviesCount, setMoviesCount] = useState(RENDERED_BASIC_CARDS);
-  console.log('moviesCount: ', moviesCount);
   const [moreMovies, setMoreMovies] = useState(RENDERED_MORE_CARD);
 
   const showMore = () => {
@@ -30,10 +29,6 @@ function MoviesCardList({
   const updateMoreItems = () => {
     setMoreMovies(RENDERED_MORE_CARD());
   };
-
-  useEffect(() => {
-
-  },[movies]);
 
   useEffect(() => {
     updateMoreItems();
