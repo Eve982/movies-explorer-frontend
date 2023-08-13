@@ -4,11 +4,8 @@ import { useForm } from "react-hook-form";
 import { REGEX_EMAIL } from "../../utils/constants";
 import "./Login.css";
 import formLink from "../../images/formLink.svg";
-// import Input from "../Input/Input";
-// Не могу понять как реализовать отображение ошибок живой
-// валидации react-hook-form при передаче errros в компонент <Input>.
-// Также пока непонятно, нужно ли прописывать value тега input при
-// использовании react-hook-form...
+import Input from "../Input/Input";
+
 function Login({ handleLogin, isLoading }) {
   const {
     register,
@@ -18,12 +15,18 @@ function Login({ handleLogin, isLoading }) {
     mode: "onChange",
   });
 
+  console.log('register: ', register);
+  console.log('handleSubmit: ', handleSubmit);
+  console.log('useForm: ', {useForm});
+
+
   const [userData, setUserData] = useState({
     email: "",
     password: "",
   });
 
   const handleChange = (e) => {
+    console.log('render');
     const { name, value } = e.target;
     setUserData({
       ...userData,
@@ -31,7 +34,7 @@ function Login({ handleLogin, isLoading }) {
     });
   };
 
-  const handlerSubmit = () => {
+  const handlerSubmit = (e) => {
     handleLogin(userData);
   };
 
@@ -48,7 +51,7 @@ function Login({ handleLogin, isLoading }) {
             type="email"
             register={register}
             inputsData={userData}
-            inputsDataHandler={setUserLoginData}
+            inputsDataHandler={setUserData}
             errors={errors}
           ></Input>
           <Input
@@ -56,7 +59,7 @@ function Login({ handleLogin, isLoading }) {
             type="password"
             register={register}
             inputsData={userData}
-            inputsDataHandler={setUserLoginData}
+            inputsDataHandler={setUserData}
             errors={errors}
           ></Input> */}
           <label className="form__input-lable">
@@ -67,6 +70,7 @@ function Login({ handleLogin, isLoading }) {
               placeholder="Email"
               disabled={isLoading}
               autoComplete="email"
+              // ref={register}
               {...register("email", {
                 onChange: (e) => {
                   handleChange(e);

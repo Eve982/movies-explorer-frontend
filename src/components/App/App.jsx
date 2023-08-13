@@ -178,8 +178,10 @@ function App() {
       .deleteMovie(movieId)
       .then((res) => {
         setSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
-        localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+        // localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+        localStorage.setItem("savedMovies", JSON.stringify(savedMovies.filter((m) => m.movieId !== movieId)));
       })
+      .then((res) => localStorage.setItem("savedMovies", JSON.stringify(savedMovies)))
       .catch((err) => showErrorPopup(err, false))
       .finally(() => setLoading(false));
   }

@@ -1,6 +1,6 @@
 .search-form {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   position: relative;
   margin-bottom: 84px;
 }
@@ -59,12 +59,12 @@
 .search-form__button {
   background-image: url(../../images/find.svg);
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
   right: 10px;
   bottom: 8px;
-  align-self: center;
+  /* align-self: center; */
   border-radius: 50%;
   cursor: pointer;
   border: none;

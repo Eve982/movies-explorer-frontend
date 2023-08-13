@@ -32,6 +32,10 @@ function MoviesCardList({
   };
 
   useEffect(() => {
+
+  },[movies]);
+
+  useEffect(() => {
     updateMoreItems();
     window.addEventListener("resize", updateMoreItems);
     return () => window.removeEventListener("resize", updateMoreItems);

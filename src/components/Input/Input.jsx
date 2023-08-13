@@ -1,4 +1,4 @@
-import { ErrorMessage } from "@hookform/error-message"
+import { ErrorMessage } from "@hookform/error-message";
 import { REGEX_EMAIL } from "../../utils/constants";
 
 function Input({
@@ -33,7 +33,7 @@ function Input({
       message: "Пароль должен содержать максимум 8 символов.",
     },
   };
-  const nameRules = {};
+  const nameRules = {}; // в форме логина не используется
 
   const setRules = () => {
     if (type === "email") {
@@ -63,10 +63,10 @@ function Input({
           })}
         />
       </label>
-      <ErrorMessage className="form__error" errors={errors} name="name" as="span" />
-      {/* {errors?.[type] && (
+      {/* <ErrorMessage className="form__error" errors={errors} name="name" as="span" /> */}
+      {errors?.[type] && (
         <span className="form__error">{errors[type].message}</span>
-      )} */}
+      )}
     </>
   );
 }
