@@ -3,6 +3,8 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 
 function SavedMovies({
+  isLoading,
+  isFiltered,
   movies,
   deleteMovie,
   isCheckBoxActive,
@@ -17,6 +19,8 @@ function SavedMovies({
         handleCheckBoxActive={handleCheckBoxActive}
       />
       <MoviesCardList
+        isLoading={isLoading}
+        isFiltered={isFiltered}
         movies={movies}
         deleteMovie={deleteMovie}
         isCheckBoxActive={isCheckBoxActive}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./MoviesCardList.css";
+import Preloader from "../Preloader/Preloader";
 import MoviesCard from "../MoviesCard/MoviesCard";
 import { findShorts } from "../../utils/filters";
 import {
@@ -8,6 +9,8 @@ import {
 } from "../../utils/constants";
 
 function MoviesCardList({
+  isLoading,
+  isFiltered,
   savedMovies,
   movies,
   saveMovie,
@@ -17,6 +20,16 @@ function MoviesCardList({
   const moviesToRender = isCheckBoxActive ? findShorts(movies) : movies;
   const [moviesCount, setMoviesCount] = useState(RENDERED_BASIC_CARDS);
   const [moreMovies, setMoreMovies] = useState(RENDERED_MORE_CARD);
+
+  // const setInfo = () => {
+  //   if (location.pathname === "/movies") {
+  //     return isFiltered.moviesSearch ? "Ничего не найдено." : null;
+  //   } else {
+  //     return (!isLoading) && !isFiltered.savedMoviesSearch
+  //       && "У Вас нет сохраненных фильмов."
+  //       // : "Ничего не найдено.";?
+  //   }
+  // };
 
   const showMore = () => {
     if (moviesCount + moreMovies <= moviesToRender.length) {
@@ -36,8 +49,8 @@ function MoviesCardList({
 
   return (
     <>
-      {/* {isLoading && <Preloader />} */}
-      {moviesToRender.length === 0 ? (
+      {isLoading && <Preloader />}
+      {!isFiltered && moviesToRender.length === 0 ? (
         <p className="movies-card-list__empty">Ничего не найдено.</p>
       ) : (
         <ul className="movies-card-list">

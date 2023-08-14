@@ -9,13 +9,13 @@ function SearchForm({
   handleCheckBoxActive,
 }) {
   const location = useLocation();
-  const parent = location.pathname === '/movies' ? "movies" : "savedMovies";
+  const parent = location.pathname === "/movies" ? "movies" : "savedMovies";
   const [searchKey, setSearchKey] = useState("");
   const [searchError, setSearchError] = useState("");
   useEffect(() => {
     // При рефреше страницы обновляем стейты из локального хранилища.
     const currentSearchKey = localStorage.getItem(
-      parent === "movies" ? "moviesSearchKey" : "savedMoviesSearchKey",
+      parent === "movies" ? "moviesSearchKey" : "savedMoviesSearchKey"
     );
     if (currentSearchKey) {
       setSearchKey(currentSearchKey);
@@ -30,7 +30,7 @@ function SearchForm({
       showError(e);
     } else {
       onFindClick(inputValue, parent);
-      if(parent === "movies") {
+      if (parent === "movies") {
         localStorage.setItem("moviesSearchKey", searchKey);
       }
     }
@@ -42,7 +42,7 @@ function SearchForm({
       setSearchError("Нужно ввести ключевое слово.");
     } else {
       setSearchError(
-        "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.",
+        "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз."
       );
     }
   }

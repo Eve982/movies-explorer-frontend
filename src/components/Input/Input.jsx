@@ -1,6 +1,10 @@
 import { ErrorMessage } from "@hookform/error-message";
 import { REGEX_EMAIL } from "../../utils/constants";
-
+// import Input from "../Input/Input";
+// Не могу понять как реализовать отображение ошибок живой
+// валидации react-hook-form при передаче errros в компонент <Input>.
+// Также пока непонятно, нужно ли прописывать value тега input при
+// использовании react-hook-form...
 function Input({
   label,
   type,

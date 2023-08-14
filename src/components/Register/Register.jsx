@@ -4,11 +4,7 @@ import { useForm } from "react-hook-form";
 import { REGEX_EMAIL } from "../../utils/constants";
 import "./Register.css";
 import formLink from "../../images/formLink.svg";
-// import Input from "../Input/Input";
-// Не могу понять как реализовать отображение ошибок живой
-// валидации react-hook-form при передаче errros в компонент <Input>.
-// Также пока непонятно, нужно ли прописывать value тега input при
-// использовании react-hook-form...
+
 function Register({ handleRegister, isLoading }) {
   const {
     register,

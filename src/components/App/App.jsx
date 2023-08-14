@@ -21,7 +21,7 @@ import InfoToolTip from "../InfoToolTip/InfoToolTip";
 function App() {
   const navigate = useNavigate();
   // const location = useLocation();
-  const [isSavedMoviesFiltered, setSavedMoviesFiltered] = useState(false);
+  // const [isSavedMoviesFiltered, setSavedMoviesFiltered] = useState(false);
   const [isCheckingToken, checkingToken] = useState(true);
 
   const [isLoading, setLoading] = useState(false);
@@ -47,6 +47,8 @@ function App() {
 
   const [filteredMovies, setFilteredMovies] = useState([]);
 
+  const [isFiltered, setFiltered] = useState({moviesSearch: false, savedMoviesSearch: false});
+
   useEffect(() => {
     function closeByEscape(e) {
       if (e.key === "Escape") {
@@ -67,7 +69,6 @@ function App() {
   }
 
   function handleRegister(data) {
-    console.log('Register data: ', data);
     setLoading(true);
     authApi
     .register(data)
@@ -131,6 +132,7 @@ function App() {
   function handleLogout() {
     authApi.logout();
     localStorage.clear();
+    setFiltered({});
     setCurrentUser({});
     setSavedMovies([]);
     setFilteredMovies([]);
@@ -147,14 +149,23 @@ function App() {
 
     if (moviesArray.length === 0) {
       showErrorPopup({ message: "У Вас нет сохраненных фильмов." }, false);
+      setLoading(false);
       return;
     } else {
       const filteredMovies = filters.filterByKeyWord(searchKey, moviesArray);
       if(parent === "movies") {
         localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
         setFilteredMovies(filteredMovies);
+        setFiltered((prevState) => ({
+          ...prevState,
+          moviesSearch: true
+        }));
       } else {
         setFilteredSavedMovies(filteredMovies);
+        setFiltered((prevState) => ({
+          ...prevState,
+          savedMoviesSearch: true
+        }));
         // setSavedMoviesFiltered(true);
       };
     }
@@ -184,10 +195,10 @@ function App() {
       .then((res) => {
         setSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
         setFilteredSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
+        localStorage.setItem("savedMovies", JSON.stringify(savedMovies.filter((m) => m.movieId !== movieId)));
       })
       .catch((err) => showErrorPopup(err, false))
       .finally(() => {
-        localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
         setLoading(false)});
   }
 
@@ -252,6 +263,8 @@ function App() {
                 <ProtectedRoute
                   isCheckingToken={isCheckingToken}
                   element={Movies}
+                  isLoading={isLoading}
+                  isFiltered={isFiltered}
                   savedMovies={savedMovies}
                   movies={filteredMovies}
                   saveMovie={saveMovie}
@@ -269,6 +282,8 @@ function App() {
                 <ProtectedRoute
                   isCheckingToken={isCheckingToken}
                   element={SavedMovies}
+                  isLoading={isLoading}
+                  isFiltered={isFiltered}
                   movies={filteredSavedMovies}
                   deleteMovie={deleteMovie}
                   isCheckBoxActive={isCheckBoxSavedMoviesActive}
