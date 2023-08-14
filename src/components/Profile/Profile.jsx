@@ -27,9 +27,6 @@ function Profile({ handleUpdateProfile, logout, isLoading }) {
     setUserData({ name: currentUser.name, email: currentUser.email });
   }, [currentUser]);
 
-  console.log('currentUser: ', currentUser);
-  console.log('userData: ', userData);
-
   const [isClicked, setClicked] = useState(false);
 
   function handleChange(e) {
@@ -44,7 +41,8 @@ function Profile({ handleUpdateProfile, logout, isLoading }) {
     setClicked(!isClicked);
   }
 
-  const handlerSubmit = () => {
+  const handlerSubmit = (userData) => {
+    console.log('userData: ', userData);
     handleUpdateProfile(userData);
     setClicked(!isClicked);
   };

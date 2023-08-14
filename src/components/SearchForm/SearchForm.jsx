@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./SearchForm.css";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 
 function SearchForm({
-  parent,
   onFindClick,
   isCheckBoxActive,
   handleCheckBoxActive,
 }) {
+  const location = useLocation();
+  const parent = location.pathname === '/movies' ? "movies" : "savedMovies";
   const [searchKey, setSearchKey] = useState("");
   const [searchError, setSearchError] = useState("");
   useEffect(() => {

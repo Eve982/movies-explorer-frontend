@@ -5,7 +5,7 @@ function ProfileLayout({ handleUpdateProfile, logout }) {
   return (
     <>
       <Header />
-      <Profile onSubmit={handleUpdateProfile} logout={logout} />
+      <Profile handleUpdateProfile={handleUpdateProfile} logout={logout} />
     </>
   );
 }

@@ -53,10 +53,6 @@
   }
 }
 
-.profile__form-label:last-of-type {
-  margin-bottom: 204px;
-}
-
 @media screen and (max-width: 768px) {
   .profile__form-label:last-of-type {
     margin-bottom: 195px;
@@ -100,6 +96,7 @@
   border: none;
   color: #fff;
   cursor: pointer;
+  margin-top: 204px;
 }
 
 .profile__link {

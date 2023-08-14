@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { REGEX_EMAIL } from "../../utils/constants";
 import "./Login.css";
 import formLink from "../../images/formLink.svg";
-import Input from "../Input/Input";
+// import Input from "../Input/Input";
 
 function Login({ handleLogin, isLoading }) {
   const {
@@ -15,9 +15,9 @@ function Login({ handleLogin, isLoading }) {
     mode: "onChange",
   });
 
-  console.log('register: ', register);
-  console.log('handleSubmit: ', handleSubmit);
-  console.log('useForm: ', {useForm});
+  // console.log('register: ', register);
+  // console.log('handleSubmit: ', handleSubmit);
+  // console.log('useForm: ', {useForm});
 
 
   const [userData, setUserData] = useState({
@@ -26,7 +26,6 @@ function Login({ handleLogin, isLoading }) {
   });
 
   const handleChange = (e) => {
-    console.log('render');
     const { name, value } = e.target;
     setUserData({
       ...userData,

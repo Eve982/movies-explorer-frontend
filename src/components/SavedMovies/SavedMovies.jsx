@@ -12,7 +12,6 @@ function SavedMovies({
   return (
     <main className="movies">
       <SearchForm
-        parent="savedMovies"
         onFindClick={onFindClick}
         isCheckBoxActive={isCheckBoxActive}
         handleCheckBoxActive={handleCheckBoxActive}

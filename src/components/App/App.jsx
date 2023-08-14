@@ -20,7 +20,8 @@ import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
 function App() {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
+  const [isSavedMoviesFiltered, setSavedMoviesFiltered] = useState(false);
   const [isCheckingToken, checkingToken] = useState(true);
 
   const [isLoading, setLoading] = useState(false);
@@ -75,7 +76,6 @@ function App() {
   }
 
   function handleLogin(data) {
-    console.log('Login data: ', data);
     setLoading(true);
     authApi
     .login(data)
@@ -153,7 +153,10 @@ function App() {
       if(parent === "movies") {
         localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
         setFilteredMovies(filteredMovies);
-      } else setFilteredSavedMovies(filteredMovies);
+      } else {
+        setFilteredSavedMovies(filteredMovies);
+        // setSavedMoviesFiltered(true);
+      };
     }
     setLoading(false);
   }
@@ -165,11 +168,13 @@ function App() {
       .then(() => {
         mainApi.getSavedMovies().then((res) => {
           setSavedMovies(res);
+          setFilteredSavedMovies(res);
           localStorage.setItem("savedMovies", JSON.stringify(res));
         });
       })
       .catch((err) => showErrorPopup(err, false))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false)});
   }
 
   function deleteMovie(movieId) {
@@ -178,10 +183,12 @@ function App() {
       .deleteMovie(movieId)
       .then((res) => {
         setSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
+        setFilteredSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
       })
-      .then((res) => localStorage.setItem("savedMovies", JSON.stringify(savedMovies)))
       .catch((err) => showErrorPopup(err, false))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        localStorage.setItem("savedMovies", JSON.stringify(savedMovies));
+        setLoading(false)});
   }
 
   function handleCheckBoxActive(parent, checkBox) {
@@ -231,12 +238,6 @@ function App() {
         .finally(() => setLoading(false));
     }
   }, [currentUser.isLoggedIn]);
-
-  useEffect(() => {
-    if (location.pathname === "/saved-movies") {
-      setFilteredSavedMovies(savedMovies);
-    }
-  }, [location.pathname]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

@@ -26,23 +26,19 @@ function MoviesCardList({
     }
   };
 
-  const updateMoreItems = () => {
-    setMoreMovies(RENDERED_MORE_CARD());
-  };
-
   useEffect(() => {
-    updateMoreItems();
-    window.addEventListener("resize", updateMoreItems);
-    return () => window.removeEventListener("resize", updateMoreItems);
+    setMoviesCount(RENDERED_BASIC_CARDS);
+    setMoreMovies(RENDERED_MORE_CARD());
+    window.addEventListener("resize", setMoreMovies(RENDERED_MORE_CARD()));
+    return () =>
+      window.removeEventListener("resize", setMoreMovies(RENDERED_MORE_CARD()));
   }, [window.innerWidth]);
 
   return (
     <>
-      {/* isLoading && <Preloader /> */}
+      {/* {isLoading && <Preloader />} */}
       {moviesToRender.length === 0 ? (
-        <p className="movies-card-list__empty">
-          Ничего не найдено :( <br /> не представляете как мы грустим &#x1F494;
-        </p>
+        <p className="movies-card-list__empty">Ничего не найдено.</p>
       ) : (
         <ul className="movies-card-list">
           {moviesToRender.slice(0, moviesCount).map((movie) => (
