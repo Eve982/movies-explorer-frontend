@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { REGEX_EMAIL } from "../../utils/constants";
+import Preloader from "../Preloader/Preloader";
 import "./Register.css";
 import formLink from "../../images/formLink.svg";
 
@@ -34,6 +35,7 @@ function Register({ handleRegister, isLoading }) {
 
   return (
     <main>
+      {isLoading && <Preloader />}
       <form className="form" onSubmit={handleSubmit(handlerSubmit)}>
         <div className="form__info">
           <Link className="form__link" to="/">

@@ -1,6 +1,6 @@
 const BEATFILM_URL = "https://api.nomoreparties.co";
-// const BASE_URL = "https://api.movies.nomoredomains.xyz";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://api.movies.nomoredomains.xyz";
+// const BASE_URL = "http://localhost:3000";
 // const REGEX_PASSWORD = /^(?=.*\d)(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,14}$/;
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const SHORT_FILM_MAX_DURATION = 40;

@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Preloader from "../Preloader/Preloader";
 import { REGEX_EMAIL } from "../../utils/constants";
-import "./Login.css";
 import formLink from "../../images/formLink.svg";
+import "./Login.css";
 // import Input from "../Input/Input";
 
 function Login({ handleLogin, isLoading }) {
@@ -18,7 +19,6 @@ function Login({ handleLogin, isLoading }) {
   // console.log('register: ', register);
   // console.log('handleSubmit: ', handleSubmit);
   // console.log('useForm: ', {useForm});
-
 
   const [userData, setUserData] = useState({
     email: "",
@@ -39,6 +39,7 @@ function Login({ handleLogin, isLoading }) {
 
   return (
     <main>
+      {isLoading && <Preloader />}
       <form className="form" onSubmit={handleSubmit(handlerSubmit)}>
         <div className="form__info">
           <Link className="form__link" to="/">

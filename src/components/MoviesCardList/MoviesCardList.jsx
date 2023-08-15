@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./MoviesCardList.css";
 import Preloader from "../Preloader/Preloader";
 import MoviesCard from "../MoviesCard/MoviesCard";
@@ -17,21 +18,12 @@ function MoviesCardList({
   deleteMovie,
   isCheckBoxActive,
 }) {
+  const location = useLocation();
   const moviesToRender = isCheckBoxActive ? findShorts(movies) : movies;
   const [moviesCount, setMoviesCount] = useState(RENDERED_BASIC_CARDS);
   const [moreMovies, setMoreMovies] = useState(RENDERED_MORE_CARD);
 
-  // const setInfo = () => {
-  //   if (location.pathname === "/movies") {
-  //     return isFiltered.moviesSearch ? "Ничего не найдено." : null;
-  //   } else {
-  //     return (!isLoading) && !isFiltered.savedMoviesSearch
-  //       && "У Вас нет сохраненных фильмов."
-  //       // : "Ничего не найдено.";?
-  //   }
-  // };
-
-  const showMore = () => {
+  const showMoreMovies = () => {
     if (moviesCount + moreMovies <= moviesToRender.length) {
       setMoviesCount(moviesCount + moreMovies);
     } else {
@@ -40,18 +32,40 @@ function MoviesCardList({
   };
 
   useEffect(() => {
-    setMoviesCount(RENDERED_BASIC_CARDS);
+    setMoviesCount(RENDERED_BASIC_CARDS());
     setMoreMovies(RENDERED_MORE_CARD());
-    window.addEventListener("resize", setMoreMovies(RENDERED_MORE_CARD()));
+  }, [movies]);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setTimeout(() => {
+        setMoreMovies(RENDERED_MORE_CARD());
+      }, 1000);
+    });
     return () =>
       window.removeEventListener("resize", setMoreMovies(RENDERED_MORE_CARD()));
   }, [window.innerWidth]);
 
+  const setInfo = () => {
+    if (moviesToRender.length === 0) {
+      if (location.pathname === "/movies") {
+        return isFiltered.movies ? "Ничего не найдено." : null;
+      }
+      if (location.pathname === "/saved-movies") {
+        return isFiltered.savedMovies
+          ? "Ничего не найдено."
+          : "У Вас нет сохраненных фильмов.";
+      }
+      return null;
+    }
+    return null;
+  };
+
   return (
     <>
       {isLoading && <Preloader />}
-      {!isFiltered && moviesToRender.length === 0 ? (
-        <p className="movies-card-list__empty">Ничего не найдено.</p>
+      {setInfo() !== null ? (
+        <p className="movies-card-list__empty">{setInfo()}</p>
       ) : (
         <ul className="movies-card-list">
           {moviesToRender.slice(0, moviesCount).map((movie) => (
@@ -66,7 +80,10 @@ function MoviesCardList({
         </ul>
       )}
       {moviesCount < moviesToRender.length && (
-        <button className="movies-card-list__button-more" onClick={showMore}>
+        <button
+          className="movies-card-list__button-more"
+          onClick={showMoreMovies}
+        >
           Еще
         </button>
       )}

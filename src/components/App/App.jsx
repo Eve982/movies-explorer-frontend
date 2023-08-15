@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import Main from "../Main/Main";
 import "./App.css";
@@ -10,7 +15,6 @@ import Register from "../Register/Register";
 import NotFoundPage from "../NotFoundPage/NotFoundPage";
 import Layout from "../Layout/Layout";
 import ProfileLayout from "../ProfileLayout/ProfileLayout";
-import Preloader from "../Preloader/Preloader";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import authApi from "../../utils/AuthApi.js";
 import mainApi from "../../utils/MainApi.js";
@@ -20,8 +24,6 @@ import InfoToolTip from "../InfoToolTip/InfoToolTip";
 
 function App() {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const [isSavedMoviesFiltered, setSavedMoviesFiltered] = useState(false);
   const [isCheckingToken, checkingToken] = useState(true);
 
   const [isLoading, setLoading] = useState(false);
@@ -47,7 +49,10 @@ function App() {
 
   const [filteredMovies, setFilteredMovies] = useState([]);
 
-  const [isFiltered, setFiltered] = useState({moviesSearch: false, savedMoviesSearch: false});
+  const [isFiltered, setFiltered] = useState({
+    movies: false,
+    savedMovies: false,
+  });
 
   useEffect(() => {
     function closeByEscape(e) {
@@ -71,26 +76,26 @@ function App() {
   function handleRegister(data) {
     setLoading(true);
     authApi
-    .register(data)
-    .then((res) => handleLogin(data))
-    .catch((err) => showErrorPopup(err, false));
+      .register(data)
+      .then((res) => handleLogin(data))
+      .catch((err) => showErrorPopup(err, false));
   }
 
   function handleLogin(data) {
     setLoading(true);
     authApi
-    .login(data)
-    .then((userData) => {
-      setCurrentUser({
-        ...userData,
-        isLoggedIn: true,
-      });
-      navigate("/movies");
-    })
-    .catch((err) => {
-      showErrorPopup(err, false);
-    })
-    .finally(() => setLoading(false));
+      .login(data)
+      .then((userData) => {
+        setCurrentUser({
+          ...userData,
+          isLoggedIn: true,
+        });
+        navigate("/movies");
+      })
+      .catch((err) => {
+        showErrorPopup(err, false);
+      })
+      .finally(() => setLoading(false));
   }
 
   function handleUpdateProfile(data) {
@@ -112,27 +117,27 @@ function App() {
   function checkToken() {
     setLoading(true);
     mainApi
-    .getUserInfo()
-    .then((userData) => {
-      setCurrentUser({
-        ...userData,
-        isLoggedIn: true,
+      .getUserInfo()
+      .then((userData) => {
+        setCurrentUser({
+          ...userData,
+          isLoggedIn: true,
+        });
+      })
+      .catch((err) => {
+        handleLogout();
+        console.log(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+        checkingToken(false);
       });
-    })
-    .catch((err) => {
-      handleLogout();
-      console.log(err.message);
-    })
-    .finally(() => {
-      setLoading(false);
-      checkingToken(false);
-    });
   }
 
   function handleLogout() {
     authApi.logout();
     localStorage.clear();
-    setFiltered({});
+    setFiltered({ movies: false, savedMovies: false });
     setCurrentUser({});
     setSavedMovies([]);
     setFilteredMovies([]);
@@ -144,7 +149,7 @@ function App() {
   function handleFindClickMovies(searchKey, parent) {
     setLoading(true);
     const moviesArray = JSON.parse(
-      localStorage.getItem(parent === "movies" ? "movies" : "savedMovies"),
+      localStorage.getItem(parent === "movies" ? "movies" : "savedMovies")
     );
 
     if (moviesArray.length === 0) {
@@ -153,21 +158,20 @@ function App() {
       return;
     } else {
       const filteredMovies = filters.filterByKeyWord(searchKey, moviesArray);
-      if(parent === "movies") {
+      if (parent === "movies") {
         localStorage.setItem("filteredMovies", JSON.stringify(filteredMovies));
         setFilteredMovies(filteredMovies);
         setFiltered((prevState) => ({
           ...prevState,
-          moviesSearch: true
+          movies: true,
         }));
       } else {
         setFilteredSavedMovies(filteredMovies);
         setFiltered((prevState) => ({
           ...prevState,
-          savedMoviesSearch: true
+          savedMovies: true,
         }));
-        // setSavedMoviesFiltered(true);
-      };
+      }
     }
     setLoading(false);
   }
@@ -178,14 +182,18 @@ function App() {
       .saveMovie(movie)
       .then(() => {
         mainApi.getSavedMovies().then((res) => {
+          localStorage.setItem("savedMovies", JSON.stringify(res));
           setSavedMovies(res);
           setFilteredSavedMovies(res);
-          localStorage.setItem("savedMovies", JSON.stringify(res));
+          console.log('res: ', res);
+          console.log('savedMovies: ', savedMovies);
+          console.log('filteredSavedMovies: ', filteredSavedMovies);
         });
       })
       .catch((err) => showErrorPopup(err, false))
       .finally(() => {
-        setLoading(false)});
+        setLoading(false);
+      });
   }
 
   function deleteMovie(movieId) {
@@ -194,12 +202,18 @@ function App() {
       .deleteMovie(movieId)
       .then((res) => {
         setSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
-        setFilteredSavedMovies((state) => state.filter((m) => m.movieId !== movieId));
-        localStorage.setItem("savedMovies", JSON.stringify(savedMovies.filter((m) => m.movieId !== movieId)));
+        setFilteredSavedMovies((state) =>
+          state.filter((m) => m.movieId !== movieId)
+        );
+        localStorage.setItem(
+          "savedMovies",
+          JSON.stringify(savedMovies.filter((m) => m.movieId !== movieId))
+        );
       })
       .catch((err) => showErrorPopup(err, false))
       .finally(() => {
-        setLoading(false)});
+        setLoading(false);
+      });
   }
 
   function handleCheckBoxActive(parent, checkBox) {
@@ -253,7 +267,6 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App">
-        {isLoading && <Preloader />}
         <Routes>
           <Route path={"/"} element={<Main />} />
           <Route element={<Layout />}>
@@ -310,10 +323,7 @@ function App() {
             path="/signin"
             element={
               !currentUser.isLoggedIn ? (
-                <Login
-                  handleLogin={handleLogin}
-                  isLoading={isLoading}
-                 />
+                <Login handleLogin={handleLogin} isLoading={isLoading} />
               ) : (
                 <Navigate replace to="/movies" />
               )
