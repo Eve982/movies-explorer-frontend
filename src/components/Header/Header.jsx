@@ -1,32 +1,44 @@
-import { useState } from "react";
-import {Link, useLocation} from 'react-router-dom';
-import "./Header.css";
+import { useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import logo from "../../images/logo.svg";
+import "./Header.css";
+import NavigationPopup from "../NavigationPopup/NavigationPopup";
 import NavAuth from "../NavAuth/NavAuth";
 import NavMain from "../NavMain/NavMain";
-import NavigationPopup from '../NavigationPopup/NavigationPopup';
 
 function Header() {
+  const currentUser = useContext(CurrentUserContext);
   const location = useLocation();
-  const [menuIsOpened, setMenuIsOpened] = useState(false);
+  const [isBurgerOpened, setBurgerOpened] = useState(false);
 
-  function handleMenuClick() {
-    setMenuIsOpened(!menuIsOpened);
+  function handleBurgerClick() {
+    setBurgerOpened(!isBurgerOpened);
   }
 
   return (
-  <header className={location.pathname === '/' ? "header header_auth" : "header" }>
-    <Link to='/'><img className="header__logo" src={logo} alt="Логотип."/></Link>
-    {location.pathname === '/' ? <NavAuth/> : <NavMain/>}
-    { location.pathname === '/' ? "" :  <button className={
-      menuIsOpened ? 'header__burger-menu_active' : "header__burger-menu" }
-      type="button"
-      aria-label="Burger-menu"
-      onClick = {handleMenuClick}
-      />}
-    {menuIsOpened && <NavigationPopup onClose={handleMenuClick}/>}
-  </header>
-  )
+    <header
+      className={location.pathname === "/" ? "header header_auth" : "header"}
+    >
+      <Link to="/">
+        <img className="header__logo" src={logo} alt="логотип" />
+      </Link>
+      {currentUser.isLoggedIn ? <NavMain /> : <NavAuth />}
+      {!currentUser.isLoggedIn || (
+        <button
+          className={
+            isBurgerOpened
+              ? "header__burger-menu_active"
+              : "header__burger-menu"
+          }
+          type="button"
+          aria-label="Burger-menu"
+          onClick={handleBurgerClick}
+        />
+      )}
+      {isBurgerOpened && <NavigationPopup onClose={handleBurgerClick} />}
+    </header>
+  );
 }
 
 export default Header;

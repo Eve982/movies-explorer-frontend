@@ -2,6 +2,8 @@
 
 Бэкенд проекта находится [здесь](https://github.com/Eve982/movies-explorer-api).
 
+Ссылка на pull request из ветки level-3 в ветку master: [здесь](https://github.com/Eve982/movies-explorer-frontend/pulls).
+
 Макет проекта находится в zip-архиве в корне данного репозитория [dark-3.fig.zip](./dark-3.fig.zip).
 
 - Frontend https://eve982.movies.nomoredomains.xyz/

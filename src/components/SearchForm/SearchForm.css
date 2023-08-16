@@ -1,71 +1,49 @@
 .search-form {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    margin-bottom: 84px;
-}
-
-
-@media screen and (max-width: 1270px) {
-    .search-form {
-        flex-direction: column;
-        align-items: center;
-        gap: 38px;
-    }
-}
-
-@media screen and (max-width: 767px) {
-    .search-form {
-        gap: 42px;
-        margin-bottom: 50px;
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
 .search-form__container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 }
 
-
 .search-form__input {
-    padding: 0;
-    line-height: 34px;
-    font-weight: 500;
-    font-size: 14px;
-    border-radius: 50px;
-    width: 932px;
-    height: 48px;
-    color: #AAA;
-    border: 1.5px solid #AAA;
-    background-color: #202020;
-    opacity: 0.8;
-    padding-left: 23px;
+  line-height: 34px;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 50px;
+  width: 100%;
+  height: 48px;
+  color: #aaa;
+  border: 1.5px solid #aaa;
+  background-color: #202020;
+  opacity: 0.8;
+  padding: 0;
+  padding-left: 23px;
 }
 
 .search-form__input::placeholder {
-    padding-left: 23px;
-}
-
-@media screen and (max-width: 1270px) {
-    .search-form__input {
-      width: 90vw;
-    }
+  padding-left: 23px;
 }
 
 .search-form__input:focus {
-    outline: auto;
+  outline: auto;
 }
 
 .search-form__button {
+  background-image: url(../../images/find.svg);
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
   right: 10px;
   bottom: 8px;
-  align-self: center;
+  /* align-self: center; */
   border-radius: 50%;
   cursor: pointer;
   border: none;
@@ -76,4 +54,12 @@
 .search-form__button:hover {
   opacity: 0.8;
   transition: opacity 0.3s;
+}
+
+.search-form__error {
+  height: 18px;
+  font-weight: 400px;
+  font-size: 13px;
+  line-height: 18px;
+  color: white;
 }

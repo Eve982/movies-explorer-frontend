@@ -1,58 +1,66 @@
 .movies-card-list {
-    display: grid;
-    justify-content: center;
-    grid-template-columns: repeat(3, 1fr);
-    row-gap: 37px;
-    column-gap: 24px;
-    padding: 0;
-    margin: 0;
-    margin-top: 70px;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 37px;
+  column-gap: 24px;
+  padding: 0;
+  margin: 0;
+  padding-top: 70px;
+  border-top: 1px solid #424242;
 }
 
 @media screen and (max-width: 1200px) {
-    .movies-card-list {
-        grid-template-columns: repeat(auto-fit, 339px);
-        margin-top: 50px;
-        gap: 30px;
-    }
+  .movies-card-list {
+    grid-template-columns: repeat(auto-fit, 339px);
+    padding-top: 50px;
+    gap: 30px;
+  }
 }
 
-@media screen and (max-width: 568px) {
-    .movies-card-list {
-        grid-template-columns: repeat(auto-fit, 300px);
-        margin-top: 43px;
-        gap: 14px;
-    }
+@media screen and (max-width: 767px) {
+  .movies-card-list {
+    grid-template-columns: repeat(auto-fit, 300px);
+    gap: 14px;
+  }
+}
+
+.movies-card-list__empty {
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
+  text-align: center;
 }
 
 .movies-card-list__button-more {
-    margin: 50px auto 80px auto;
-    width: 320px;
-    height: 36px;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 15px;
-    background-color: #2F2F2F;
-    color: white;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
+  margin: 50px auto 80px auto;
+  width: 320px;
+  height: 36px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  background-color: #2f2f2f;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
 .movies-card-list__button-more:hover {
-    opacity: 0.4;
-    transition: opacity 0.3s;
+  opacity: 0.4;
+  transition: opacity 0.3s;
 }
 
 @media screen and (max-width: 1000px) {
-    .movies-card-list__button-more {
-        margin-top: 81px;
-    }
+  .movies-card-list__button-more {
+    margin-top: 81px;
+  }
 }
 
 @media screen and (max-width: 560px) {
-    .movies-card-list__button-more {
-        width: 240px;
-        margin-top: 70px;
-    }
+  .movies-card-list__button-more {
+    width: 240px;
+    margin-top: 70px;
+  }
 }

@@ -1,65 +1,142 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import './Login.css';
-import formLink from '../../images/formLink.svg';
-import Input from "../Input/Input";
-import validateEmail from "../../utils/validateEmail";
-import validatePassword from "../../utils/validatePassword";
+import { useForm } from "react-hook-form";
+import Preloader from "../Preloader/Preloader";
+import { REGEX_EMAIL } from "../../utils/constants";
+import formLink from "../../images/formLink.svg";
+import "./Login.css";
+// import Input from "../Input/Input";
 
-function Login() {
-  const [validate, setValidate] = useState({});
-  const handleError = (isValidate) => {
-    setValidate(prev => ({...prev, ...isValidate}));
+function Login({ handleLogin, isLoading }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
+  // console.log('register: ', register);
+  // console.log('handleSubmit: ', handleSubmit);
+  // console.log('useForm: ', {useForm});
+
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value,
+    });
   };
-  const isFormValidated = (validate) => {
-    if (Object.values.length === 0) return false;
-    console.log('Object.values: ', Object.values.length);
-    const res = Object.values(validate).every(item => {
-      return item;
-    } )
-    console.log('res: ', res);
-    return res;
-  }
+
+  const handlerSubmit = (e) => {
+    handleLogin(userData);
+  };
 
   return (
-  <main>
-    <form className="form">
-      <div className="form__info">
-        <Link className="form__link" to="/">
-          <img className="form__image" src={formLink} alt="Логотип."/>
-        </Link>
-        <h2 className="form__title">Рады видеть!</h2>
-        <Input className="form__input"
-          label="Email"
-          type="email"
-          name="email"
-          onError={handleError}
-          validator={validateEmail}
-          textError="Некорректный e-mail."
-          placeholder="Email"
-          required />
-        <Input
-          label="Пароль"
-          type="password"
-          onError={handleError}
-          validator={validatePassword}
-          textError="Слишком короткий пароль."
-          name="password"
-          placeholder="Password"
-          required
-        />
-      </div>
-      <div className="form__buttons-section">
-        <button className={`form__submit-button form__submit-button_login
-          ${!isFormValidated(validate) ? "form__submit-button_disabled" : ''}`}>Войти
-        </button>
-        <p className="form__question">Еще не зарегистрированы?
-          <Link to='/signup' className="form__link">Регистрация</Link>
-        </p>
-      </div>
-    </form>
-  </main>
-  )
+    <main>
+      {isLoading && <Preloader />}
+      <form className="form" onSubmit={handleSubmit(handlerSubmit)}>
+        <div className="form__info">
+          <Link className="form__link" to="/">
+            <img className="form__image" src={formLink} alt="логотип" />
+          </Link>
+          <h2 className="form__title">Рады видеть!</h2>
+          {/* <Input
+            label="Email"
+            type="email"
+            register={register}
+            inputsData={userData}
+            inputsDataHandler={setUserData}
+            errors={errors}
+          ></Input>
+          <Input
+            label="Password"
+            type="password"
+            register={register}
+            inputsData={userData}
+            inputsDataHandler={setUserData}
+            errors={errors}
+          ></Input> */}
+          <label className="form__input-lable">
+            Email
+            <input
+              className="form__input"
+              type="email"
+              placeholder="Email"
+              disabled={isLoading}
+              autoComplete="email"
+              // ref={register}
+              {...register("email", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле email обязательно к заполнению.",
+                pattern: {
+                  value: REGEX_EMAIL,
+                  message: "Email должен иметь формат xxx@xxx.xx.",
+                },
+              })}
+              // value={userData.email}
+            />
+          </label>
+          {errors?.email && (
+            <span className="form__error">{errors.email.message}</span>
+          )}
+          <label className="form__input-lable">
+            Пароль
+            <input
+              className="form__input"
+              type="password"
+              placeholder="Password"
+              disabled={isLoading}
+              autoComplete="current-password"
+              {...register("password", {
+                onChange: (e) => {
+                  handleChange(e);
+                },
+                required: "Поле обязательно к заполнению!",
+                minLength: {
+                  value: 3,
+                  message: "Пароль должен содержать минимум 3 символа.",
+                },
+                maxLength: {
+                  value: 8,
+                  message: "Пароль должен содержать максимум 8 символов.",
+                },
+              })}
+              // value={userData.password}
+            />
+          </label>
+          {errors?.password && (
+            <span className="form__error">{errors.password.message}</span>
+          )}
+        </div>
+        <div className="form__buttons-section">
+          <button
+            className={`form__submit-button form__submit-button_login
+              ${
+                !isValid || isLoading ? "form__submit-button_disabled" : ""
+              }`}
+            type="submit"
+            disabled={!isValid}
+          >
+            {isLoading ? "Двери открываются..." : "Войти"}
+          </button>
+          <p className="form__question">
+            Еще не зарегистрированы?
+            <Link to="/signup" className="form__link">
+              Регистрация
+            </Link>
+          </p>
+        </div>
+      </form>
+    </main>
+  );
 }
 
 export default Login;
